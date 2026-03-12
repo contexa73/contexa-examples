@@ -1,0 +1,15 @@
+# Enforce Mode: AI decisions are actively enforced.
+# BLOCK -> 403, CHALLENGE -> 401 (MFA), ESCALATE -> 423 (manual review).
+# Switch to this mode after HCAD baselines are stable and false positive rate < 1%.
+
+security:
+  zerotrust:
+    enabled: true
+    mode: ENFORCE
+
+contexa:
+  hcad:
+    enabled: true
+    baseline:
+      autoLearning: true
+      minSamples: 10

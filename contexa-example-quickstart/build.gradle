@@ -1,0 +1,2 @@
+// No additional dependencies required.
+// All Contexa modules are included via spring-boot-starter-contexa (root build.gradle).

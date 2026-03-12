@@ -1,0 +1,15 @@
+# Shadow Mode: AI evaluates but does NOT enforce decisions.
+# All requests proceed normally. Decisions are logged for analysis.
+# Use this mode for 2-4 weeks to build HCAD behavioral baselines.
+
+security:
+  zerotrust:
+    enabled: true
+    mode: SHADOW
+
+contexa:
+  hcad:
+    enabled: true
+    baseline:
+      autoLearning: true
+      minSamples: 10

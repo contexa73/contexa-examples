@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request OTT Code</title>
+    <style>
+        body { min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: -apple-system, sans-serif; background: #0f172a; color: #e2e8f0; }
+        .card { width: 100%; max-width: 400px; background: rgba(30,41,59,.7); border: 1px solid rgba(148,163,184,.12); border-radius: 16px; padding: 40px 32px; }
+        h1 { text-align: center; font-size: 22px; color: #f1f5f9; margin-bottom: 8px; }
+        .sub { text-align: center; font-size: 13px; color: #94a3b8; margin-bottom: 24px; }
+        label { display: block; font-size: 12px; font-weight: 600; color: #94a3b8; text-transform: uppercase; margin-bottom: 6px; }
+        input { width: 100%; background: rgba(15,23,42,.6); border: 1px solid rgba(148,163,184,.18); border-radius: 8px; padding: 12px; font-size: 14px; color: #f1f5f9; }
+        input:focus { outline: none; border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,.2); }
+        .btn { display: block; width: 100%; border: none; border-radius: 8px; padding: 12px; font-size: 14px; font-weight: 600; color: #fff; background: #f59e0b; cursor: pointer; margin-top: 16px; }
+        .btn:hover { opacity: .9; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>Request OTT Code</h1>
+    <p class="sub">Enter your username to receive a one-time token.</p>
+    <form method="post" th:action="@{/ott/generate-token}">
+        <label for="username">Username</label>
+        <input id="username" type="text" name="username" placeholder="Enter your username" required autofocus>
+        <button class="btn" type="submit">Send Code</button>
+    </form>
+</div>
+</body>
+</html>

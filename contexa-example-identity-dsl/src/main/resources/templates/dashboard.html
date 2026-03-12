@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Contexa Example</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; color: #333; }
+        h1 { color: #4f46e5; }
+        .card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.5rem; margin: 1rem 0; }
+        .badge { background: #10b981; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem; }
+        a { color: #4f46e5; }
+    </style>
+</head>
+<body>
+    <h1>Dashboard</h1>
+    <p>Welcome! You are authenticated and protected by Contexa Zero Trust.</p>
+
+    <div class="card">
+        <h3>Security Status <span class="badge">Active</span></h3>
+        <p>Your session is monitored by AISessionSecurityContextRepository. Every request is evaluated by the CustomDynamicAuthorizationManager through the HCAD pipeline.</p>
+    </div>
+
+    <div class="card">
+        <h3>Identity DSL Configuration</h3>
+        <ul>
+            <li>Global HTTP Customizer &mdash; CSRF disabled, static resources excluded</li>
+            <li>MFA &mdash; Form login (primary) + Passkey (secondary)</li>
+            <li>Session &mdash; Default session management</li>
+            <li>Authorization &mdash; CustomDynamicAuthorizationManager</li>
+        </ul>
+    </div>
+
+    <p><a href="/api/profile">View API Profile</a> | <a href="/logout">Logout</a></p>
+</body>
+</html>
