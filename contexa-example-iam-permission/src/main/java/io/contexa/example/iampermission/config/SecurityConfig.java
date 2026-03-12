@@ -36,6 +36,8 @@ public class SecurityConfig {
             http
                     .csrf(AbstractHttpConfigurer::disable)
                     .authorizeHttpRequests(authReq -> authReq
+                            .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
+                            .requestMatchers("/login", "/test/**").permitAll()
                             .requestMatchers("/api/auth/**", "/api/health").permitAll()
                             .anyRequest().access(customDynamicAuthorizationManager))
                     .securityContext(sc ->
@@ -45,7 +47,8 @@ public class SecurityConfig {
         return registry
                 .global(globalHttpCustomizer)
                 .form(form -> form
-                        .defaultSuccessUrl("/api/profile"))
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/test/permission"))
                 .session(Customizer.withDefaults())
                 .build();
     }

@@ -34,7 +34,8 @@ public class SecurityConfig {
             http
                     .csrf(AbstractHttpConfigurer::disable)
                     .authorizeHttpRequests(authReq -> authReq
-                            .requestMatchers("/api/auth/**", "/api/health").permitAll()
+                            .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
+                            .requestMatchers("/test/**", "/api/auth/**", "/api/health").permitAll()
                             .anyRequest().access(customDynamicAuthorizationManager)
                     )
                     .securityContext(sc ->

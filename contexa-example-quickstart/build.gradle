@@ -1,2 +1,3 @@
-// No additional dependencies required.
-// All Contexa modules are included via spring-boot-starter-contexa (root build.gradle).
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+}

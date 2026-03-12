@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REST Login Test - Contexa</title>
+    <style>
+        :root {
+            --primary-dark: #1a237e;
+            --primary-light: #3949ab;
+            --primary-accent: #5c6bc0;
+            --bg-primary: #f5f7fa;
+            --bg-card: #ffffff;
+            --text-primary: #263238;
+            --text-secondary: #546e7a;
+            --border-color: #e0e0e0;
+            --success: #2e7d32;
+            --error: #c62828;
+            --info: #1565c0;
+            --warning: #e65100;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+            color: white; padding: 1.5rem 2rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .header h1 { font-size: 1.4rem; }
+        .header .subtitle { font-size: 0.85rem; opacity: 0.8; margin-top: 0.2rem; }
+        .header .badge { background: rgba(255,255,255,0.2); padding: 0.3rem 0.8rem; border-radius: 12px; font-size: 0.75rem; }
+        .login-indicator { display: flex; align-items: center; gap: 0.5rem; }
+        .login-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .login-dot.connected { background: #4caf50; box-shadow: 0 0 6px rgba(76,175,80,0.5); }
+        .login-dot.disconnected { background: #bdbdbd; }
+
+        .main { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; }
+        .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        @media (max-width: 768px) { .grid-2col { grid-template-columns: 1fr; } }
+
+        .card { background: var(--bg-card); border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); padding: 1.5rem; margin-bottom: 1.5rem; }
+        .card-title { font-size: 1rem; font-weight: 600; color: var(--primary-dark); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--primary-accent); }
+
+        label { display: block; font-weight: 600; color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.3rem; margin-top: 0.8rem; }
+        input[type="text"], input[type="password"] {
+            width: 100%; padding: 0.5rem 0.7rem; border: 1px solid var(--border-color);
+            border-radius: 4px; font-size: 0.9rem;
+        }
+        .btn { padding: 0.6rem 1.2rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+        .btn-primary { background: var(--primary-dark); color: white; width: 100%; margin-top: 1rem; }
+        .btn-primary:hover { background: var(--primary-light); }
+        .btn-secondary { background: #e8eaf6; color: var(--primary-dark); }
+        .btn-secondary:hover { background: #c5cae9; }
+        .btn-danger { background: var(--error); color: white; }
+        .btn-danger:hover { background: #b71c1c; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .btn-row { display: flex; gap: 0.5rem; margin-top: 0.8rem; flex-wrap: wrap; }
+        .btn-row .btn { flex: 1; min-width: 120px; }
+
+        .json-panel { background: #1e1e2e; border-radius: 6px; padding: 1rem; margin-top: 0.8rem; max-height: 250px; overflow-y: auto; }
+        .json-panel pre { color: #cdd6f4; font-family: 'Cascadia Code', 'Fira Code', monospace; font-size: 0.8rem; white-space: pre-wrap; word-break: break-all; }
+        .json-label { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.3rem; font-weight: 600; text-transform: uppercase; }
+
+        .response-status { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 3px; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .status-200 { background: #c8e6c9; color: #2e7d32; }
+        .status-401 { background: #fff3e0; color: #e65100; }
+        .status-403 { background: #ffcdd2; color: #c62828; }
+        .status-500 { background: #e1bee7; color: #7b1fa2; }
+
+        .timeline { max-height: 200px; overflow-y: auto; }
+        .timeline-entry { display: flex; gap: 0.8rem; padding: 0.4rem 0; border-bottom: 1px solid #f0f0f0; font-size: 0.8rem; }
+        .timeline-time { color: var(--text-secondary); font-family: monospace; white-space: nowrap; min-width: 70px; }
+        .timeline-msg { flex: 1; }
+        .timeline-entry.success .timeline-msg { color: var(--success); }
+        .timeline-entry.error .timeline-msg { color: var(--error); }
+        .timeline-entry.info .timeline-msg { color: var(--info); }
+
+        .note { background: #e8eaf6; padding: 0.8rem; border-radius: 4px; font-size: 0.8rem; color: var(--primary-dark); margin-bottom: 1rem; line-height: 1.5; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div>
+            <h1>REST Login Test</h1>
+            <div class="subtitle">JSON-based authentication for SPA / Mobile backends</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:1rem;">
+            <span class="badge">Port 8085</span>
+            <div class="login-indicator">
+                <span class="login-dot disconnected" id="login-dot"></span>
+                <span id="login-status" style="font-size:0.8rem;">Not authenticated</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="main">
+        <div class="note">
+            This example uses <strong>registry.rest()</strong> instead of form login.
+            Authentication is done via <strong>POST /api/auth/login</strong> with JSON body.
+            No login page or form submission required.
+        </div>
+
+        <div class="grid-2col">
+            <!-- Left: REST Login -->
+            <div>
+                <div class="card">
+                    <div class="card-title">REST Login</div>
+                    <label for="username">Username</label>
+                    <input type="text" id="username" value="user">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" value="password">
+                    <button class="btn btn-primary" id="btn-login" onclick="App.restLogin()">REST Login (JSON POST)</button>
+
+                    <div class="json-label" style="margin-top:1rem;">Request Preview</div>
+                    <div class="json-panel">
+                        <pre id="request-preview">POST /api/auth/login
+Content-Type: application/x-www-form-urlencoded
+
+username=user&amp;password=password</pre>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Response</div>
+                    <div id="response-status"></div>
+                    <div class="json-panel">
+                        <pre id="response-body">No response yet.</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: API Test + Timeline -->
+            <div>
+                <div class="card">
+                    <div class="card-title">API Test</div>
+                    <div class="btn-row">
+                        <button class="btn btn-secondary" id="btn-profile" onclick="App.getProfile()">GET /api/profile</button>
+                        <button class="btn btn-secondary" onclick="App.healthCheck()">GET /api/health</button>
+                    </div>
+                    <div class="btn-row">
+                        <button class="btn btn-danger" onclick="App.logout()">Logout</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Timeline</div>
+                    <div class="timeline" id="timeline">
+                        <div class="timeline-entry info">
+                            <span class="timeline-time">--:--:--</span>
+                            <span class="timeline-msg">Ready. Enter credentials and click REST Login.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/rest-test.js}"></script>
+</body>
+</html>

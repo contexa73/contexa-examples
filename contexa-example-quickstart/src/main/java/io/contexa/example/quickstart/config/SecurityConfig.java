@@ -1,4 +1,4 @@
-package io.contexa.example.iamdynamicauth.config;
+package io.contexa.example.quickstart.config;
 
 import io.contexa.contexacore.security.AISessionSecurityContextRepository;
 import io.contexa.contexaiam.security.xacml.pep.CustomDynamicAuthorizationManager;
@@ -14,12 +14,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 
 /**
- * URL dynamic authorization example.
+ * SecurityConfig for quickstart test page access.
  *
- * All requests go through CustomDynamicAuthorizationManager
- * which evaluates URL policies from database at runtime.
- *
- * Policies use AI security expressions (#trust, #ai) for intelligent access control.
+ * Overrides the default PlatformConfig to add permitAll for
+ * static resources and the test page endpoint.
  */
 @Configuration
 @EnableWebSecurity
@@ -34,21 +32,21 @@ public class SecurityConfig {
 
         SafeHttpCustomizer<HttpSecurity> globalHttpCustomizer = http -> {
             http
-                    .csrf(AbstractHttpConfigurer::disable)
-                    .authorizeHttpRequests(authReq -> authReq
-                            .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
-                            .requestMatchers("/login", "/test/**").permitAll()
-                            .requestMatchers("/api/auth/**", "/api/health").permitAll()
-                            .anyRequest().access(customDynamicAuthorizationManager))
-                    .securityContext(sc ->
-                            sc.securityContextRepository(aiSessionSecurityContextRepository));
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(authReq -> authReq
+                    .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
+                    .requestMatchers("/login", "/test/**", "/api/health").permitAll()
+                    .anyRequest().access(customDynamicAuthorizationManager)
+                )
+                .securityContext(sc ->
+                    sc.securityContextRepository(aiSessionSecurityContextRepository));
         };
 
         return registry
                 .global(globalHttpCustomizer)
                 .form(form -> form
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/test/dynamic-auth"))
+                    .loginPage("/login")
+                    .defaultSuccessUrl("/test/quickstart"))
                 .session(Customizer.withDefaults())
                 .build();
     }

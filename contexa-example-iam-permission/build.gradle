@@ -1,1 +1,3 @@
-// Permission evaluator example - uses common dependencies only
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+}

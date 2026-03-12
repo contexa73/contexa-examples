@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASEP Test - Contexa</title>
+    <style>
+        :root {
+            --primary-dark: #1a237e;
+            --primary-light: #3949ab;
+            --primary-accent: #5c6bc0;
+            --bg-primary: #f5f7fa;
+            --bg-card: #ffffff;
+            --text-primary: #263238;
+            --text-secondary: #546e7a;
+            --border-color: #e0e0e0;
+            --success: #2e7d32;
+            --error: #c62828;
+            --warning: #e65100;
+            --info: #1565c0;
+            --policy: #7b1fa2;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+            color: white; padding: 1.5rem 2rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .header h1 { font-size: 1.4rem; }
+        .header .subtitle { font-size: 0.85rem; opacity: 0.8; margin-top: 0.2rem; }
+        .header .badge { background: rgba(255,255,255,0.2); padding: 0.3rem 0.8rem; border-radius: 12px; font-size: 0.75rem; }
+        .header-right { display: flex; align-items: center; gap: 1rem; }
+        .header-right a { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.85rem; }
+        .header-right a:hover { color: white; }
+
+        .main { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
+        .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        @media (max-width: 768px) { .grid-2col { grid-template-columns: 1fr; } }
+
+        .card { background: var(--bg-card); border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); padding: 1.5rem; margin-bottom: 1.5rem; }
+        .card-title { font-size: 1rem; font-weight: 600; color: var(--primary-dark); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--primary-accent); }
+
+        .note { background: #e8eaf6; padding: 1rem; border-radius: 6px; font-size: 0.85rem; color: var(--primary-dark); margin-bottom: 1.5rem; line-height: 1.6; }
+        .note strong { display: block; margin-bottom: 0.3rem; }
+
+        /* Exception trigger buttons */
+        .trigger-card { border: 1px solid var(--border-color); border-radius: 6px; padding: 1rem; margin-bottom: 0.8rem; }
+        .trigger-card h4 { font-size: 0.9rem; margin-bottom: 0.3rem; }
+        .trigger-card .desc { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
+        .trigger-card .path { font-family: monospace; font-size: 0.8rem; color: var(--text-secondary); background: #f5f5f5; padding: 0.2rem 0.5rem; border-radius: 3px; display: inline-block; margin-bottom: 0.5rem; }
+        .trigger-card .exc-type { font-size: 0.75rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 3px; display: inline-block; }
+        .exc-auth { background: #fff3e0; color: var(--warning); }
+        .exc-access { background: #ffcdd2; color: var(--error); }
+        .exc-policy { background: #e1bee7; color: var(--policy); }
+        .exc-normal { background: #c8e6c9; color: var(--success); }
+
+        .btn { padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 600; width: 100%; margin-top: 0.5rem; }
+        .btn-auth { background: var(--warning); color: white; }
+        .btn-access { background: var(--error); color: white; }
+        .btn-policy { background: var(--policy); color: white; }
+        .btn-normal { background: var(--success); color: white; }
+        .btn:hover { opacity: 0.9; }
+
+        /* Flow diagram */
+        .flow-diagram { background: #fafafa; border: 1px solid var(--border-color); border-radius: 6px; padding: 1rem; margin-top: 0.8rem; }
+        .flow-step { display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0; font-size: 0.8rem; }
+        .flow-arrow { color: var(--primary-accent); font-weight: bold; }
+        .flow-label { font-family: monospace; font-size: 0.75rem; }
+        .flow-step.active .flow-label { color: var(--primary-dark); font-weight: 600; }
+        .flow-step.completed .flow-label { color: var(--success); }
+
+        /* Response */
+        .json-panel { background: #1e1e2e; border-radius: 6px; padding: 1rem; max-height: 350px; overflow-y: auto; }
+        .json-panel pre { color: #cdd6f4; font-family: 'Cascadia Code', 'Fira Code', monospace; font-size: 0.8rem; white-space: pre-wrap; word-break: break-all; }
+
+        .response-status { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 3px; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .status-200 { background: #c8e6c9; color: #2e7d32; }
+        .status-401 { background: #fff3e0; color: #e65100; }
+        .status-403 { background: #ffcdd2; color: #c62828; }
+        .status-500 { background: #e1bee7; color: #7b1fa2; }
+
+        /* Timeline */
+        .timeline { max-height: 250px; overflow-y: auto; }
+        .timeline-entry { display: flex; gap: 0.8rem; padding: 0.4rem 0; border-bottom: 1px solid #f0f0f0; font-size: 0.8rem; }
+        .timeline-time { color: var(--text-secondary); font-family: monospace; white-space: nowrap; min-width: 70px; }
+        .timeline-msg { flex: 1; }
+        .timeline-entry.success .timeline-msg { color: var(--success); }
+        .timeline-entry.error .timeline-msg { color: var(--error); }
+        .timeline-entry.info .timeline-msg { color: var(--info); }
+        .timeline-entry.warning .timeline-msg { color: var(--warning); }
+        .timeline-entry.policy .timeline-msg { color: var(--policy); }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div>
+            <h1>ASEP Exception Handling Test</h1>
+            <div class="subtitle">@SecurityControllerAdvice - Filter chain exception handling</div>
+        </div>
+        <div class="header-right">
+            <span class="badge">Port 8088</span>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+    </header>
+
+    <div class="main">
+        <div class="note">
+            <strong>What is ASEP?</strong>
+            Spring's @ControllerAdvice only catches exceptions at the controller level.
+            Spring Security operates in the filter chain BEFORE the servlet, so @ControllerAdvice cannot catch security filter exceptions.
+            ASEP's ASEPFilter catches ALL exceptions in the filter chain and delegates them to @SecurityControllerAdvice handlers.
+        </div>
+
+        <div class="grid-2col">
+            <!-- Left: Exception Triggers -->
+            <div>
+                <div class="card">
+                    <div class="card-title">Exception Triggers</div>
+
+                    <div class="trigger-card">
+                        <h4>Authentication Error</h4>
+                        <span class="exc-type exc-auth">AuthenticationException</span>
+                        <div class="path">/api/trigger-auth-error</div>
+                        <div class="desc">Throws InsufficientAuthenticationException in CustomSecurityExceptionFilter</div>
+                        <button class="btn btn-auth" onclick="App.trigger('auth')">Trigger Auth Error</button>
+                    </div>
+
+                    <div class="trigger-card">
+                        <h4>Access Denied Error</h4>
+                        <span class="exc-type exc-access">AccessDeniedException</span>
+                        <div class="path">/api/trigger-access-error</div>
+                        <div class="desc">Throws AccessDeniedException in CustomSecurityExceptionFilter</div>
+                        <button class="btn btn-access" onclick="App.trigger('access')">Trigger Access Denied</button>
+                    </div>
+
+                    <div class="trigger-card">
+                        <h4>Custom Policy Violation</h4>
+                        <span class="exc-type exc-policy">SecurityPolicyViolationException</span>
+                        <div class="path">/api/trigger-custom-error</div>
+                        <div class="desc">Throws custom SecurityPolicyViolationException - proves ASEP handles ANY exception type</div>
+                        <button class="btn btn-policy" onclick="App.trigger('custom')">Trigger Policy Violation</button>
+                    </div>
+
+                    <div class="trigger-card">
+                        <h4>Normal API (no error)</h4>
+                        <span class="exc-type exc-normal">No Exception</span>
+                        <div class="path">/api/profile</div>
+                        <div class="desc">Normal API call for comparison - no exception thrown</div>
+                        <button class="btn btn-normal" onclick="App.trigger('normal')">Call Normal API</button>
+                    </div>
+                </div>
+
+                <!-- Flow Diagram -->
+                <div class="card">
+                    <div class="card-title">Exception Flow</div>
+                    <div class="flow-diagram" id="flow-diagram">
+                        <div class="flow-step" id="flow-request">
+                            <span class="flow-label">1. Client Request</span>
+                        </div>
+                        <div class="flow-step"><span class="flow-arrow">|</span></div>
+                        <div class="flow-step" id="flow-filter">
+                            <span class="flow-label">2. Security Filter Chain</span>
+                        </div>
+                        <div class="flow-step"><span class="flow-arrow">|</span></div>
+                        <div class="flow-step" id="flow-exception">
+                            <span class="flow-label">3. CustomSecurityExceptionFilter (throws)</span>
+                        </div>
+                        <div class="flow-step"><span class="flow-arrow">|</span></div>
+                        <div class="flow-step" id="flow-asep">
+                            <span class="flow-label">4. ASEPFilter (catches)</span>
+                        </div>
+                        <div class="flow-step"><span class="flow-arrow">|</span></div>
+                        <div class="flow-step" id="flow-advice">
+                            <span class="flow-label">5. @SecurityControllerAdvice (handles)</span>
+                        </div>
+                        <div class="flow-step"><span class="flow-arrow">|</span></div>
+                        <div class="flow-step" id="flow-response">
+                            <span class="flow-label">6. JSON Response to Client</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Response + Timeline -->
+            <div>
+                <div class="card">
+                    <div class="card-title">Response</div>
+                    <div id="response-status"></div>
+                    <div class="json-panel">
+                        <pre id="response-body">Click a trigger button to see the ASEP exception handling response.</pre>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Timeline</div>
+                    <div class="timeline" id="timeline">
+                        <div class="timeline-entry info">
+                            <span class="timeline-time">--:--:--</span>
+                            <span class="timeline-msg">Ready. Click an exception trigger button.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/asep-test.js}"></script>
+</body>
+</html>

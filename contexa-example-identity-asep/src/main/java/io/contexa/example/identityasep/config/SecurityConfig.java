@@ -5,6 +5,7 @@ import io.contexa.contexaiam.security.xacml.pep.CustomDynamicAuthorizationManage
 import io.contexa.contexaidentity.security.core.config.PlatformConfig;
 import io.contexa.contexaidentity.security.core.dsl.IdentityDslRegistry;
 import io.contexa.contexaidentity.security.core.dsl.common.SafeHttpCustomizer;
+import io.contexa.example.identityasep.filter.CustomSecurityExceptionFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,13 +13,17 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * ASEP (Authentication Security Endpoint Processing) example.
+ * ASEP example SecurityConfig.
  *
- * Enables ASEP annotations via .form().asep() DSL.
- * Allows @SecurityControllerAdvice, @SecurityExceptionHandler,
- * @SecurityPrincipal, @AuthenticationObject, etc. to work.
+ * Registers a custom filter (CustomSecurityExceptionFilter) that throws exceptions
+ * within the security filter chain. ASEPFilter catches these exceptions and
+ * delegates to @SecurityControllerAdvice (CustomSecurityExceptionAdvice).
+ *
+ * Flow: Request -> Filter Chain -> CustomSecurityExceptionFilter (throws)
+ *       -> ASEPFilter (catches) -> @SecurityControllerAdvice (handles) -> JSON Response
  */
 @Configuration
 @EnableWebSecurity
@@ -33,20 +38,26 @@ public class SecurityConfig {
 
         SafeHttpCustomizer<HttpSecurity> globalHttpCustomizer = http -> {
             http
-                    .csrf(AbstractHttpConfigurer::disable)
-                    .authorizeHttpRequests(authReq -> authReq
-                            .requestMatchers("/api/auth/**", "/api/health").permitAll()
-                            .anyRequest().access(customDynamicAuthorizationManager)
-                    )
-                    .securityContext(sc ->
-                            sc.securityContextRepository(aiSessionSecurityContextRepository));
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(authReq -> authReq
+                    .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
+                    .requestMatchers("/login", "/test/**", "/api/auth/**", "/api/health").permitAll()
+                    .requestMatchers("/api/trigger-*").permitAll()
+                    .anyRequest().access(customDynamicAuthorizationManager)
+                )
+                .securityContext(sc ->
+                    sc.securityContextRepository(aiSessionSecurityContextRepository))
+                // Register custom filter that throws exceptions for demo purposes
+                .addFilterBefore(new CustomSecurityExceptionFilter(),
+                    UsernamePasswordAuthenticationFilter.class);
         };
 
         return registry
                 .global(globalHttpCustomizer)
                 .form(form -> form
-                        .defaultSuccessUrl("/api/profile")
-                        .asep(Customizer.withDefaults()))
+                    .loginPage("/login")
+                    .defaultSuccessUrl("/test/asep")
+                    .asep(Customizer.withDefaults()))
                 .session(Customizer.withDefaults())
                 .build();
     }
