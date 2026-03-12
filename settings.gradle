@@ -10,3 +10,11 @@ include 'contexa-example-identity-ott'
 include 'contexa-example-identity-mfa'
 include 'contexa-example-identity-asep'
 include 'contexa-example-identity-oauth2'
+
+include 'contexa-example-iam-dynamic-auth'
+include 'contexa-example-iam-protectable-analysis'
+include 'contexa-example-iam-permission'
+
+include 'contexa-example-ai-lab'
+include 'contexa-example-ai-pipeline'
+include 'contexa-example-ai-llm'

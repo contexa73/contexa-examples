@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI LLM Test - Chat with Advisors</title>
+    <link rel="stylesheet" th:href="@{/css/contexa-common.css}">
+    <link rel="stylesheet" th:href="@{/css/llm-test.css}">
+</head>
+<body>
+<div class="ctx-container">
+    <header class="ctx-header">
+        <h1>AI LLM Test &mdash; Chat with Advisors</h1>
+        <p class="ctx-subtitle">UnifiedLLMOrchestrator + Custom BaseAdvisor + ExecutionContext</p>
+    </header>
+
+    <div class="llm-layout">
+        <!-- Chat Panel -->
+        <div class="ctx-card chat-panel">
+            <h3>Chat</h3>
+            <div id="chatMessages" class="chat-messages">
+                <div class="chat-msg system-msg">
+                    Welcome! Type a message and select an analysis level to start chatting.
+                </div>
+            </div>
+            <div class="chat-controls">
+                <div class="level-selector">
+                    <label>Analysis Level:</label>
+                    <button class="level-btn active" data-level="QUICK" onclick="selectLevel(this)">QUICK</button>
+                    <button class="level-btn" data-level="NORMAL" onclick="selectLevel(this)">NORMAL</button>
+                    <button class="level-btn" data-level="DEEP" onclick="selectLevel(this)">DEEP</button>
+                </div>
+                <div class="chat-input-row">
+                    <textarea id="chatInput" class="ctx-input" rows="2"
+                              placeholder="Type your message..."
+                              onkeydown="handleKeyDown(event)"></textarea>
+                    <div class="chat-btn-col">
+                        <button id="btnSend" class="ctx-btn ctx-btn-primary" onclick="sendChat()">Send</button>
+                        <button id="btnStream" class="ctx-btn ctx-btn-secondary" onclick="sendStream()">Stream</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advisor Log Panel -->
+        <div class="ctx-card advisor-panel">
+            <h3>Advisor Log</h3>
+            <div id="advisorLog" class="advisor-log"></div>
+
+            <h4 style="margin-top:20px;color:#94a3b8;">Timeline</h4>
+            <div id="advisorTimeline" class="advisor-timeline"></div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/contexa-streaming.js}"></script>
+<script th:src="@{/js/llm-test.js}"></script>
+</body>
+</html>

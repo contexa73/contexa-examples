@@ -1,0 +1,4 @@
+// AI Pipeline + Streaming example - requires thymeleaf for test UI
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+}

@@ -1,0 +1,48 @@
+server:
+  port: 8091
+
+contexa:
+  infrastructure:
+    mode: standalone
+
+spring:
+  application:
+    name: contexa-example-iam-protectable-analysis
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/contexa
+    username: ${DB_USERNAME:admin}
+    password: ${DB_PASSWORD:1111}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database: POSTGRESQL
+    hibernate:
+      ddl-auto: update
+
+  sql:
+    init:
+      mode: always
+
+  ai:
+    chat:
+      model:
+        priority: ollama
+
+    ollama:
+      base-url: http://127.0.0.1:11434
+      chat:
+        options:
+          model: qwen2.5:7b
+          keep-alive: "24h"
+      embedding:
+        enabled: true
+        model: mxbai-embed-large
+
+    vectorstore:
+      pgvector:
+        table-name: vector_store
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
+        dimensions: 1024
+        initialize-schema: true

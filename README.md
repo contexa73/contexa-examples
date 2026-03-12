@@ -58,9 +58,21 @@ implementation 'io.contexa:spring-boot-starter-contexa:0.1.0'
 | `contexa-example-identity-asep` | 8088 | ASEP security exception annotations |
 | `contexa-example-identity-oauth2` | 8089 | OAuth2 JWT stateless authentication |
 
-### IAM *(coming soon)*
+### IAM
 
-### AI Engine *(coming soon)*
+| Module | Port | Description |
+|--------|------|-------------|
+| `contexa-example-iam-dynamic-auth` | 8090 | URL dynamic authorization with AI security expressions (#trust, #ai) |
+| `contexa-example-iam-protectable-analysis` | 8091 | @Protectable + 5 AnalysisRequirement levels + SSE real-time LLM analysis |
+| `contexa-example-iam-permission` | 8092 | hasPermission() with custom DomainPermissionEvaluator |
+
+### AI Engine
+
+| Module | Port | Description |
+|--------|------|-------------|
+| `contexa-example-ai-lab` | 8093 | Custom AILab + AIStrategy + PromptTemplate (sentiment analysis) |
+| `contexa-example-ai-pipeline` | 8094 | PipelineOrchestrator + Custom PipelineStep + DomainResponseProcessor + SSE streaming |
+| `contexa-example-ai-llm` | 8095 | UnifiedLLMOrchestrator + Custom BaseAdvisor + ExecutionContext + Chat UI |
 
 ---
 
@@ -98,6 +110,24 @@ Each module runs independently:
 
 # Identity OAuth2 (port 8089)
 ./gradlew :contexa-example-identity-oauth2:bootRun
+
+# IAM Dynamic Auth (port 8090)
+./gradlew :contexa-example-iam-dynamic-auth:bootRun
+
+# IAM Protectable Analysis (port 8091)
+./gradlew :contexa-example-iam-protectable-analysis:bootRun
+
+# IAM Permission (port 8092)
+./gradlew :contexa-example-iam-permission:bootRun
+
+# AI Lab (port 8093) — http://localhost:8093/lab/test
+./gradlew :contexa-example-ai-lab:bootRun
+
+# AI Pipeline (port 8094) — http://localhost:8094/pipeline/test
+./gradlew :contexa-example-ai-pipeline:bootRun
+
+# AI LLM (port 8095) — http://localhost:8095/llm/test
+./gradlew :contexa-example-ai-llm:bootRun
 ```
 
 ---

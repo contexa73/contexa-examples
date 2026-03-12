@@ -1,0 +1,156 @@
+/* Pipeline step visualization */
+.pipeline-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px 16px;
+    margin-bottom: 16px;
+    background: #1e293b;
+    border-radius: 8px;
+    flex-wrap: wrap;
+}
+
+.pipeline-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: #334155;
+    border: 2px solid #475569;
+    min-width: 100px;
+    transition: all 0.3s ease;
+}
+
+.pipeline-step.active {
+    border-color: #3b82f6;
+    background: #1e3a5f;
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
+}
+
+.pipeline-step.completed {
+    border-color: #10b981;
+    background: #064e3b;
+}
+
+.pipeline-step.error {
+    border-color: #ef4444;
+    background: #7f1d1d;
+}
+
+.step-number {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #475569;
+    color: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+}
+
+.pipeline-step.active .step-number { background: #3b82f6; }
+.pipeline-step.completed .step-number { background: #10b981; }
+.pipeline-step.error .step-number { background: #ef4444; }
+
+.step-label {
+    font-size: 0.78rem;
+    color: #94a3b8;
+    text-align: center;
+}
+
+.pipeline-step.active .step-label,
+.pipeline-step.completed .step-label { color: #e2e8f0; }
+
+.step-time {
+    font-size: 0.7rem;
+    color: #64748b;
+    margin-top: 4px;
+}
+
+.step-arrow {
+    color: #475569;
+    font-size: 1.2rem;
+}
+
+/* Code textarea */
+.ctx-code {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    tab-size: 4;
+}
+
+/* Vulnerability cards */
+.vuln-card {
+    background: #0f172a;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 8px;
+    border-left: 4px solid;
+}
+
+.vuln-card.CRITICAL { border-left-color: #ef4444; }
+.vuln-card.HIGH { border-left-color: #f97316; }
+.vuln-card.MEDIUM { border-left-color: #eab308; }
+.vuln-card.LOW { border-left-color: #3b82f6; }
+
+.vuln-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.vuln-type {
+    font-weight: 600;
+    color: #e2e8f0;
+    font-size: 0.9rem;
+}
+
+.vuln-severity {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.vuln-severity.CRITICAL { background: #7f1d1d; color: #fca5a5; }
+.vuln-severity.HIGH { background: #7c2d12; color: #fdba74; }
+.vuln-severity.MEDIUM { background: #713f12; color: #fde68a; }
+.vuln-severity.LOW { background: #1e3a5f; color: #93c5fd; }
+
+.vuln-desc { color: #94a3b8; font-size: 0.85rem; margin-bottom: 4px; }
+.vuln-location { color: #64748b; font-size: 0.8rem; }
+.vuln-fix { color: #6ee7b7; font-size: 0.82rem; margin-top: 4px; }
+
+/* Severity badge */
+.severity-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.severity-CRITICAL { background: #7f1d1d; color: #fca5a5; }
+.severity-HIGH { background: #7c2d12; color: #fdba74; }
+.severity-MEDIUM { background: #713f12; color: #fde68a; }
+.severity-LOW { background: #1e3a5f; color: #93c5fd; }
+
+/* Recommendations */
+.rec-list { padding-left: 20px; }
+.rec-list li { color: #cbd5e1; margin-bottom: 6px; font-size: 0.9rem; }
+
+.result-section { margin-top: 16px; }
+.result-label { color: #94a3b8; font-size: 0.85rem; margin-bottom: 4px; }
+.summary-text { color: #cbd5e1; line-height: 1.6; }
+
+@media (max-width: 768px) {
+    .pipeline-steps { flex-direction: column; }
+    .step-arrow { transform: rotate(90deg); }
+}

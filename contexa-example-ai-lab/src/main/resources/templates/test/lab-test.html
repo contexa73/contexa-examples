@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Lab Test - Sentiment Analysis</title>
+    <link rel="stylesheet" th:href="@{/css/contexa-common.css}">
+    <style>
+        .confidence-bar { height: 8px; border-radius: 4px; background: #334155; margin-top: 6px; }
+        .confidence-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #3b82f6, #10b981); transition: width 0.6s ease; }
+        .keyword-tag { display: inline-block; padding: 4px 10px; margin: 3px; border-radius: 12px; background: #1e3a5f; color: #93c5fd; font-size: 0.85rem; }
+        .sentiment-badge { display: inline-block; padding: 6px 16px; border-radius: 6px; font-weight: 600; font-size: 1.1rem; }
+        .sentiment-POSITIVE { background: #064e3b; color: #6ee7b7; }
+        .sentiment-NEGATIVE { background: #7f1d1d; color: #fca5a5; }
+        .sentiment-NEUTRAL { background: #1e3a5f; color: #93c5fd; }
+        .sentiment-MIXED { background: #713f12; color: #fde68a; }
+        .result-section { margin-top: 16px; }
+        .result-label { color: #94a3b8; font-size: 0.85rem; margin-bottom: 4px; }
+        .summary-text { color: #cbd5e1; line-height: 1.6; }
+    </style>
+</head>
+<body>
+<div class="ctx-container">
+    <header class="ctx-header">
+        <h1>AI Lab Test &mdash; Sentiment Analysis</h1>
+        <p class="ctx-subtitle">Custom AILab + AIStrategy + PromptTemplate demonstration</p>
+    </header>
+
+    <div class="ctx-layout">
+        <!-- Input Panel -->
+        <div class="ctx-card">
+            <h3>Input</h3>
+            <div class="ctx-form-group">
+                <label for="textInput">Text to analyze</label>
+                <textarea id="textInput" class="ctx-input ctx-textarea" rows="8"
+                          placeholder="Enter text for sentiment analysis...">The new product launch exceeded all expectations. Customer feedback has been overwhelmingly positive, with many praising the intuitive design and excellent performance. However, some users reported minor issues with the initial setup process.</textarea>
+            </div>
+            <div class="ctx-form-group">
+                <label for="langSelect">Language</label>
+                <select id="langSelect" class="ctx-input">
+                    <option value="en">English</option>
+                    <option value="ko">Korean</option>
+                    <option value="ja">Japanese</option>
+                    <option value="zh">Chinese</option>
+                </select>
+            </div>
+            <div class="ctx-btn-group">
+                <button id="btnAnalyze" class="ctx-btn ctx-btn-primary" onclick="analyzeSentiment()">Analyze</button>
+                <button id="btnStream" class="ctx-btn ctx-btn-secondary" onclick="analyzeStream()">Stream</button>
+            </div>
+        </div>
+
+        <!-- Result Panel -->
+        <div class="ctx-card">
+            <h3>Result</h3>
+
+            <!-- Result Display (hidden until analysis completes) -->
+            <div id="resultArea" style="display:none;">
+                <div class="result-section">
+                    <div class="result-label">Sentiment</div>
+                    <span id="sentimentBadge" class="sentiment-badge"></span>
+                </div>
+
+                <div class="result-section">
+                    <div class="result-label">Confidence</div>
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <span id="confidenceValue" style="font-size:1.2rem;font-weight:600;color:#e2e8f0;min-width:50px;"></span>
+                        <div class="confidence-bar" style="flex:1;">
+                            <div id="confidenceFill" class="confidence-fill"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-section">
+                    <div class="result-label">Keywords</div>
+                    <div id="keywordsArea"></div>
+                </div>
+
+                <div class="result-section">
+                    <div class="result-label">Summary</div>
+                    <div id="summaryText" class="summary-text"></div>
+                </div>
+            </div>
+
+            <!-- Placeholder when no result -->
+            <div id="resultPlaceholder" class="ctx-placeholder">
+                Run analysis to see results here.
+            </div>
+
+            <!-- Streaming Log -->
+            <div class="result-section" style="margin-top:24px;">
+                <div class="result-label">Streaming Log</div>
+                <div id="streamLog" class="ctx-log"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/contexa-streaming.js}"></script>
+<script th:src="@{/js/lab-test.js}"></script>
+</body>
+</html>

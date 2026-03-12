@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Pipeline Test - Code Security Analysis</title>
+    <link rel="stylesheet" th:href="@{/css/contexa-common.css}">
+    <link rel="stylesheet" th:href="@{/css/pipeline-test.css}">
+</head>
+<body>
+<div class="ctx-container">
+    <header class="ctx-header">
+        <h1>AI Pipeline Test &mdash; Code Security Analysis</h1>
+        <p class="ctx-subtitle">PipelineOrchestrator + Custom PipelineStep + DomainResponseProcessor</p>
+    </header>
+
+    <!-- Pipeline Step Visualization -->
+    <div class="pipeline-steps">
+        <div class="pipeline-step" id="step-CONTEXT_RETRIEVAL">
+            <div class="step-number">1</div>
+            <div class="step-label">Context Retrieval</div>
+            <div class="step-time" id="time-CONTEXT_RETRIEVAL"></div>
+        </div>
+        <div class="step-arrow">&rarr;</div>
+        <div class="pipeline-step" id="step-PREPROCESSING">
+            <div class="step-number">2</div>
+            <div class="step-label">Preprocessing</div>
+            <div class="step-time" id="time-PREPROCESSING"></div>
+        </div>
+        <div class="step-arrow">&rarr;</div>
+        <div class="pipeline-step" id="step-PROMPT_GENERATION">
+            <div class="step-number">3</div>
+            <div class="step-label">Prompt Gen</div>
+            <div class="step-time" id="time-PROMPT_GENERATION"></div>
+        </div>
+        <div class="step-arrow">&rarr;</div>
+        <div class="pipeline-step" id="step-LLM_EXECUTION">
+            <div class="step-number">4</div>
+            <div class="step-label">LLM Execution</div>
+            <div class="step-time" id="time-LLM_EXECUTION"></div>
+        </div>
+        <div class="step-arrow">&rarr;</div>
+        <div class="pipeline-step" id="step-RESPONSE_PARSING">
+            <div class="step-number">5</div>
+            <div class="step-label">Response Parse</div>
+            <div class="step-time" id="time-RESPONSE_PARSING"></div>
+        </div>
+        <div class="step-arrow">&rarr;</div>
+        <div class="pipeline-step" id="step-POSTPROCESSING">
+            <div class="step-number">6</div>
+            <div class="step-label">Postprocessing</div>
+            <div class="step-time" id="time-POSTPROCESSING"></div>
+        </div>
+    </div>
+
+    <div class="ctx-layout">
+        <!-- Input Panel -->
+        <div class="ctx-card">
+            <h3>Code Input</h3>
+            <div class="ctx-form-group">
+                <label for="langSelect">Language</label>
+                <select id="langSelect" class="ctx-input">
+                    <option value="java">Java</option>
+                    <option value="python">Python</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="go">Go</option>
+                </select>
+            </div>
+            <div class="ctx-form-group">
+                <label for="codeInput">Code snippet</label>
+                <textarea id="codeInput" class="ctx-input ctx-textarea ctx-code" rows="14"
+                          placeholder="Paste code to analyze...">public class UserDao {
+    private Connection conn;
+
+    public User findById(String userId) {
+        String query = "SELECT * FROM users WHERE id = '" + userId + "'";
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+        if (rs.next()) {
+            return new User(rs.getString("name"), rs.getString("email"));
+        }
+        return null;
+    }
+
+    public void updatePassword(String userId, String newPassword) {
+        String query = "UPDATE users SET password = '" + newPassword
+                     + "' WHERE id = '" + userId + "'";
+        conn.createStatement().executeUpdate(query);
+    }
+}</textarea>
+            </div>
+            <div class="ctx-btn-group">
+                <button id="btnAnalyze" class="ctx-btn ctx-btn-primary" onclick="analyzePipeline()">Analyze</button>
+                <button id="btnStream" class="ctx-btn ctx-btn-secondary" onclick="analyzeStream()">Stream</button>
+            </div>
+        </div>
+
+        <!-- Result Panel -->
+        <div class="ctx-card">
+            <h3>Analysis Result</h3>
+
+            <div id="resultArea" style="display:none;">
+                <div class="result-section">
+                    <div class="result-label">Overall Severity</div>
+                    <span id="severityBadge" class="severity-badge"></span>
+                </div>
+
+                <div class="result-section">
+                    <div class="result-label">Vulnerabilities</div>
+                    <div id="vulnList"></div>
+                </div>
+
+                <div class="result-section">
+                    <div class="result-label">Recommendations</div>
+                    <ul id="recList" class="rec-list"></ul>
+                </div>
+
+                <div class="result-section">
+                    <div class="result-label">Summary</div>
+                    <div id="summaryText" class="summary-text"></div>
+                </div>
+            </div>
+
+            <div id="resultPlaceholder" class="ctx-placeholder">
+                Run pipeline analysis to see results here.
+            </div>
+
+            <!-- Streaming Log -->
+            <div class="result-section" style="margin-top:24px;">
+                <div class="result-label">Pipeline Log</div>
+                <div id="streamLog" class="ctx-log"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/contexa-streaming.js}"></script>
+<script th:src="@{/js/pipeline-test.js}"></script>
+</body>
+</html>
