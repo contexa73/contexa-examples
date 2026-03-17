@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Multi MFA Example - Contexa</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0a0a14; color: #e2e8f0; }
+        .container { width: 100%; max-width: 640px; padding: 0 24px; }
+        .header { text-align: center; margin-bottom: 48px; }
+        .header h1 { font-size: 28px; font-weight: 700; color: #f1f5f9; margin-bottom: 8px; }
+        .header p { font-size: 14px; color: #94a3b8; }
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; background: rgba(99,102,241,.15); color: #818cf8; border: 1px solid rgba(99,102,241,.25); margin-bottom: 16px; }
+        .cards { display: flex; gap: 20px; }
+        .card { flex: 1; background: rgba(30,41,59,.6); border: 1px solid rgba(148,163,184,.1); border-radius: 16px; padding: 32px 24px; text-align: center; transition: transform .2s, border-color .2s; cursor: pointer; text-decoration: none; color: inherit; }
+        .card:hover { transform: translateY(-4px); border-color: rgba(148,163,184,.25); }
+        .card-icon { font-size: 36px; margin-bottom: 16px; }
+        .card h2 { font-size: 18px; color: #f1f5f9; margin-bottom: 6px; }
+        .card p { font-size: 13px; color: #94a3b8; line-height: 1.5; margin-bottom: 16px; }
+        .card-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+        .card-badge.passkey { background: rgba(139,92,246,.15); color: #a78bfa; border: 1px solid rgba(139,92,246,.25); }
+        .card-badge.ott { background: rgba(245,158,11,.15); color: #fbbf24; border: 1px solid rgba(245,158,11,.25); }
+        .card-url { font-size: 12px; color: #64748b; margin-top: 12px; font-family: monospace; }
+        .footer { text-align: center; margin-top: 48px; font-size: 12px; color: #475569; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <span class="badge">Multi MFA Example</span>
+        <h1>Contexa Multi MFA</h1>
+        <p>Two independent MFA flows with URL isolation via urlPrefix()</p>
+    </div>
+
+    <div class="cards">
+        <a class="card" href="/admin/mfa/login">
+            <div class="card-icon">&#128272;</div>
+            <h2>Admin Portal</h2>
+            <p>Passkey-based MFA for administrators. Uses WebAuthn biometric authentication.</p>
+            <span class="card-badge passkey">Passkey MFA</span>
+            <div class="card-url">urlPrefix("/admin")</div>
+        </a>
+
+        <a class="card" href="/user/mfa/login">
+            <div class="card-icon">&#128100;</div>
+            <h2>User Portal</h2>
+            <p>OTT-based MFA for general users. Uses email one-time token.</p>
+            <span class="card-badge ott">OTT MFA</span>
+            <div class="card-url">urlPrefix("/user")</div>
+        </a>
+    </div>
+
+    <div class="footer">
+        Contexa Identity Platform | Multi MFA with Independent SecurityFilterChains
+    </div>
+</div>
+</body>
+</html>
