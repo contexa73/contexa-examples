@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Legacy System - Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+               background: #f0f2f5; padding: 24px; }
+        .header { display: flex; justify-content: space-between; align-items: center;
+                  background: white; padding: 16px 24px; border-radius: 12px;
+                  box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 24px; }
+        .header h1 { font-size: 1.3rem; color: #1a1a2e; }
+        .legacy-badge { background: #ff6b35; color: white; padding: 2px 8px;
+                        border-radius: 4px; font-size: 0.7rem; font-weight: 700; }
+        .user-info { display: flex; align-items: center; gap: 16px; }
+        .user-info span { font-size: 0.9rem; color: #555; }
+        .user-info a { color: #dc3545; text-decoration: none; font-weight: 600; font-size: 0.85rem; }
+        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+        .card { background: white; padding: 24px; border-radius: 12px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .card h2 { font-size: 1.1rem; margin-bottom: 12px; color: #1a1a2e; }
+        .card p { color: #666; font-size: 0.9rem; line-height: 1.6; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px;
+                 font-size: 0.75rem; font-weight: 600; }
+        .badge-role { background: #e8f4fd; color: #1a73e8; }
+        .badge-dept { background: #f0f4e8; color: #558b2f; }
+        .badge-method { background: #fef3e2; color: #e65100; }
+        .api-link { display: inline-block; margin-top: 12px; padding: 8px 16px; background: #1a1a2e;
+                    color: white; border-radius: 8px; text-decoration: none; font-size: 0.85rem; }
+        .api-link:hover { background: #2d2d4e; }
+        .contexa-section { margin-top: 24px; padding: 20px; background: linear-gradient(135deg, #0a1224, #1a2a4a);
+                           border-radius: 12px; color: white; }
+        .contexa-section h2 { color: #7db8f0; margin-bottom: 12px; }
+        .contexa-section p { color: #a0b4c8; font-size: 0.9rem; line-height: 1.6; }
+        .contexa-badge { background: rgba(93,164,224,0.2); color: #7db8f0; border: 1px solid rgba(93,164,224,0.3);
+                         padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div>
+        <span class="legacy-badge">LEGACY SYSTEM</span>
+        <h1>Enterprise Dashboard</h1>
+    </div>
+    <div class="user-info">
+        <span th:if="${user}">
+            <strong th:text="${user.displayName}">User</strong>
+            <span class="badge badge-role" th:each="role : ${user.roles}" th:text="${role}">ROLE</span>
+            <span class="badge badge-dept" th:text="${user.department}">DEPT</span>
+            <span class="badge badge-method" th:text="${user.authMethod}">METHOD</span>
+        </span>
+        <a href="/legacy/logout">Logout</a>
+    </div>
+</div>
+
+<div class="cards">
+    <div class="card">
+        <h2>Legacy Dashboard</h2>
+        <p>This page is protected by the legacy authentication system (LegacyAuthFilter).
+           No Spring Security, no Contexa involvement.
+           Your legacy security works exactly as before.</p>
+    </div>
+
+    <div class="card">
+        <h2>Legacy Admin Panel</h2>
+        <p>Restricted to ADMIN role via @LegacyRole annotation and LegacyAuthorizationInterceptor.</p>
+        <a href="/legacy/admin" class="api-link">Open Admin Panel</a>
+    </div>
+
+    <div class="card">
+        <h2>Legacy API (Token Auth)</h2>
+        <p>API endpoints authenticated via X-Auth-Token header. Legacy token-based auth.</p>
+        <code style="display:block; margin-top:8px; padding:8px; background:#f5f5f5; border-radius:4px; font-size:0.8rem; color:#333;">
+            curl -H "X-Auth-Token: tok-admin-a1b2c3d4e5f6" http://localhost:9090/legacy/dashboard
+        </code>
+    </div>
+</div>
+
+<div class="contexa-section">
+    <span class="contexa-badge">CONTEXA AI ZERO TRUST</span>
+    <h2>Contexa Protected APIs</h2>
+    <p>The following APIs are protected by Contexa @Protectable annotation.
+       Your legacy login is automatically bridged to Contexa via AuthBridge.
+       AI analyzes every access and can CHALLENGE or BLOCK suspicious behavior.</p>
+    <div style="margin-top: 16px; display: flex; gap: 12px;">
+        <a href="/api/customers" class="api-link" style="background: rgba(93,164,224,0.3);">
+            @Protectable Customer List</a>
+        <a href="/api/customers/export" class="api-link" style="background: rgba(220,38,38,0.3);">
+            @Protectable(sync) Customer Export</a>
+    </div>
+</div>
+</body>
+</html>

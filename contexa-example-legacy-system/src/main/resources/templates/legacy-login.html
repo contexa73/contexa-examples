@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Legacy System - Login</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+               background: #f0f2f5; display: flex; justify-content: center; align-items: center;
+               min-height: 100vh; }
+        .login-container { background: white; padding: 40px; border-radius: 12px;
+                           box-shadow: 0 4px 24px rgba(0,0,0,0.1); width: 400px; }
+        .login-container h1 { font-size: 1.5rem; margin-bottom: 8px; color: #1a1a2e; }
+        .login-container .subtitle { color: #666; font-size: 0.9rem; margin-bottom: 24px; }
+        .legacy-badge { display: inline-block; background: #ff6b35; color: white; padding: 2px 8px;
+                        border-radius: 4px; font-size: 0.75rem; font-weight: 700; margin-bottom: 16px; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 600; color: #333; font-size: 0.9rem; }
+        .form-group input[type="text"], .form-group input[type="password"] {
+            width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px;
+            font-size: 1rem; }
+        .form-group input:focus { outline: none; border-color: #4a90d9; }
+        .remember-me { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+        .remember-me label { font-size: 0.85rem; color: #555; }
+        .btn-login { width: 100%; padding: 12px; background: #1a1a2e; color: white; border: none;
+                     border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600; }
+        .btn-login:hover { background: #2d2d4e; }
+        .error { color: #dc3545; background: #fff3f3; padding: 10px; border-radius: 8px;
+                 margin-bottom: 16px; font-size: 0.85rem; }
+        .success { color: #28a745; background: #f0fff4; padding: 10px; border-radius: 8px;
+                   margin-bottom: 16px; font-size: 0.85rem; }
+        .users-info { margin-top: 24px; padding-top: 20px; border-top: 1px solid #eee; }
+        .users-info h3 { font-size: 0.85rem; color: #888; margin-bottom: 8px; }
+        .users-info table { width: 100%; font-size: 0.8rem; border-collapse: collapse; }
+        .users-info td { padding: 4px 8px; color: #555; }
+        .users-info td:first-child { font-weight: 600; }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <span class="legacy-badge">LEGACY SYSTEM</span>
+    <h1>Enterprise Portal Login</h1>
+    <p class="subtitle">This is a legacy system with its own authentication. No Spring Security.</p>
+
+    <div th:if="${error}" class="error" th:text="${error}"></div>
+    <div th:if="${message}" class="success" th:text="${message}"></div>
+
+    <form method="post" action="/legacy/login">
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" name="username" placeholder="Enter username" required autofocus>
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Enter password" required>
+        </div>
+        <div class="remember-me">
+            <input type="checkbox" id="rememberMe" name="rememberMe">
+            <label for="rememberMe">Remember me (cookie-based)</label>
+        </div>
+        <button type="submit" class="btn-login">Sign In</button>
+    </form>
+
+    <div class="users-info">
+        <h3>Test Accounts</h3>
+        <table>
+            <tr><td>admin / admin123</td><td>ADMIN, MANAGER</td></tr>
+            <tr><td>kim_manager / manager123</td><td>MANAGER</td></tr>
+            <tr><td>park_dev / dev123</td><td>DEVELOPER</td></tr>
+            <tr><td>lee_analyst / analyst123</td><td>ANALYST</td></tr>
+        </table>
+    </div>
+</div>
+</body>
+</html>
