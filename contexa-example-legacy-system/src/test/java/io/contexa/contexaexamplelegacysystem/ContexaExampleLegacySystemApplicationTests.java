@@ -1,10 +1,10 @@
-package io.contexa.contexaexampleslegacy;
+package io.contexa.contexaexamplelegacysystem;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ContexaExamplesLegacyApplicationTests {
+class ContexaExampleLegacySystemApplicationTests {
 
     @Test
     void contextLoads() {

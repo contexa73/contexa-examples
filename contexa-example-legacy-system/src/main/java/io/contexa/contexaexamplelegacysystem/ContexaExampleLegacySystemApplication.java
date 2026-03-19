@@ -1,13 +1,13 @@
-package io.contexa.contexaexampleslegacy;
+package io.contexa.contexaexamplelegacysystem;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ContexaExamplesLegacyApplication {
+public class ContexaExampleLegacySystemApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ContexaExamplesLegacyApplication.class, args);
+        SpringApplication.run(ContexaExampleLegacySystemApplication.class, args);
     }
 
 }
