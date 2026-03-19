@@ -46,13 +46,7 @@ public class LegacyAuthFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) res;
         String path = request.getRequestURI();
 
-        // Skip static resources and public pages
-        if (isPublicPath(path)) {
-            chain.doFilter(request, response);
-            return;
-        }
-
-        // Handle login POST
+        // Handle login POST (before public path check)
         if ("POST".equals(request.getMethod()) && "/legacy/login".equals(path)) {
             handleFormLogin(request, response);
             return;
@@ -61,6 +55,12 @@ public class LegacyAuthFilter implements Filter {
         // Handle logout
         if ("/legacy/logout".equals(path)) {
             handleLogout(request, response);
+            return;
+        }
+
+        // Skip static resources and public pages
+        if (isPublicPath(path)) {
+            chain.doFilter(request, response);
             return;
         }
 
