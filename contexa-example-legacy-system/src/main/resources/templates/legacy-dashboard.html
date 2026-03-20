@@ -2,93 +2,293 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Legacy System - Dashboard</title>
+    <title>Legacy Enterprise Portal</title>
     <style>
+        :root {
+            --bg-dark: #0a0e1a;
+            --bg-card: rgba(15,22,42,0.85);
+            --border: rgba(55,80,120,0.3);
+            --text-primary: #e8edf5;
+            --text-secondary: #8899b4;
+            --accent-blue: #5da4e0;
+            --accent-orange: #ff6b35;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --accent-purple: #a78bfa;
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-               background: #f0f2f5; padding: 24px; }
-        .header { display: flex; justify-content: space-between; align-items: center;
-                  background: white; padding: 16px 24px; border-radius: 12px;
-                  box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 24px; }
-        .header h1 { font-size: 1.3rem; color: #1a1a2e; }
-        .legacy-badge { background: #ff6b35; color: white; padding: 2px 8px;
-                        border-radius: 4px; font-size: 0.7rem; font-weight: 700; }
-        .user-info { display: flex; align-items: center; gap: 16px; }
-        .user-info span { font-size: 0.9rem; color: #555; }
-        .user-info a { color: #dc3545; text-decoration: none; font-weight: 600; font-size: 0.85rem; }
-        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
-        .card { background: white; padding: 24px; border-radius: 12px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-        .card h2 { font-size: 1.1rem; margin-bottom: 12px; color: #1a1a2e; }
-        .card p { color: #666; font-size: 0.9rem; line-height: 1.6; }
-        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px;
-                 font-size: 0.75rem; font-weight: 600; }
-        .badge-role { background: #e8f4fd; color: #1a73e8; }
-        .badge-dept { background: #f0f4e8; color: #558b2f; }
-        .badge-method { background: #fef3e2; color: #e65100; }
-        .api-link { display: inline-block; margin-top: 12px; padding: 8px 16px; background: #1a1a2e;
-                    color: white; border-radius: 8px; text-decoration: none; font-size: 0.85rem; }
-        .api-link:hover { background: #2d2d4e; }
-        .contexa-section { margin-top: 24px; padding: 20px; background: linear-gradient(135deg, #0a1224, #1a2a4a);
-                           border-radius: 12px; color: white; }
-        .contexa-section h2 { color: #7db8f0; margin-bottom: 12px; }
-        .contexa-section p { color: #a0b4c8; font-size: 0.9rem; line-height: 1.6; }
-        .contexa-badge { background: rgba(93,164,224,0.2); color: #7db8f0; border: 1px solid rgba(93,164,224,0.3);
-                         padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-dark);
+            background-image: radial-gradient(ellipse at 50% 0%, rgba(30,58,108,0.35) 0%, transparent 60%);
+            min-height: 100vh; color: var(--text-primary);
+        }
+
+        /* Header */
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 18px 32px;
+            background: rgba(10,14,26,0.9);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+        }
+        .header-left { display: flex; align-items: center; gap: 14px; }
+        .header h1 { font-size: 1.25rem; font-weight: 700; }
+        .legacy-badge {
+            background: var(--accent-orange); color: white;
+            padding: 3px 10px; border-radius: 5px;
+            font-size: 0.65rem; font-weight: 800; letter-spacing: 0.5px;
+        }
+        .user-bar { display: flex; align-items: center; gap: 12px; }
+        .user-name { font-weight: 600; font-size: 0.9rem; color: var(--text-primary); }
+        .badge {
+            display: inline-block; padding: 2px 8px; border-radius: 5px;
+            font-size: 0.68rem; font-weight: 700; letter-spacing: 0.3px;
+        }
+        .badge-role { background: rgba(93,164,224,0.15); color: var(--accent-blue); border: 1px solid rgba(93,164,224,0.3); }
+        .badge-dept { background: rgba(34,197,94,0.12); color: var(--accent-green); border: 1px solid rgba(34,197,94,0.25); }
+        .badge-method { background: rgba(255,107,53,0.12); color: var(--accent-orange); border: 1px solid rgba(255,107,53,0.25); }
+        .btn-logout {
+            padding: 6px 16px; border-radius: 6px; border: 1px solid rgba(239,68,68,0.4);
+            background: rgba(239,68,68,0.1); color: #fca5a5;
+            text-decoration: none; font-size: 0.8rem; font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-logout:hover { background: rgba(239,68,68,0.25); }
+
+        /* Main */
+        .main { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+
+        /* Section Title */
+        .section-title {
+            font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;
+            color: var(--text-secondary); margin-bottom: 16px; text-transform: uppercase;
+        }
+        .section-title .title-badge {
+            display: inline-block; padding: 2px 8px; border-radius: 4px;
+            font-size: 0.6rem; margin-left: 8px;
+        }
+        .title-badge.legacy { background: rgba(255,107,53,0.15); color: var(--accent-orange); border: 1px solid rgba(255,107,53,0.3); }
+        .title-badge.contexa { background: rgba(93,164,224,0.15); color: var(--accent-blue); border: 1px solid rgba(93,164,224,0.3); }
+
+        /* Cards Grid */
+        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; margin-bottom: 40px; }
+        .card {
+            background: linear-gradient(165deg, rgba(25,38,68,0.95), rgba(18,28,52,0.9));
+            border: 1px solid rgba(70,100,150,0.35);
+            border-radius: 14px; padding: 24px;
+            transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+            position: relative; overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.04);
+        }
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(93,164,224,0.4), transparent);
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .card:hover { border-color: rgba(93,164,224,0.5); transform: translateY(-3px);
+                       box-shadow: 0 12px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06); }
+        .card:hover::before { opacity: 1; }
+        .card-icon { font-size: 1.5rem; margin-bottom: 12px; }
+        .card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: var(--text-primary); }
+        .card p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
+        .card-code {
+            display: block; margin-top: 12px; padding: 10px 14px;
+            background: rgba(0,0,0,0.3); border: 1px solid rgba(55,80,120,0.2);
+            border-radius: 8px; font-size: 0.75rem; color: #8fc8f0;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            overflow-x: auto; white-space: nowrap;
+        }
+        .btn-action {
+            display: inline-block; margin-top: 14px; padding: 8px 18px;
+            border-radius: 8px; text-decoration: none; font-size: 0.82rem; font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-legacy { background: rgba(255,107,53,0.15); color: var(--accent-orange); border: 1px solid rgba(255,107,53,0.3); }
+        .btn-legacy:hover { background: rgba(255,107,53,0.3); }
+
+        /* Contexa Section */
+        .contexa-section {
+            background: linear-gradient(135deg, rgba(20,35,65,0.95), rgba(30,50,90,0.85));
+            border: 1px solid rgba(93,164,224,0.35);
+            border-radius: 16px; padding: 28px 32px;
+            position: relative; overflow: hidden;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(93,164,224,0.1);
+        }
+        .contexa-section::before {
+            content: ''; position: absolute; top: -50%; right: -20%; width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(93,164,224,0.08) 0%, transparent 70%);
+        }
+        .contexa-section h2 { font-size: 1.15rem; color: var(--accent-blue); margin-bottom: 10px; }
+        .contexa-section p { font-size: 0.88rem; color: #8fa8c8; line-height: 1.7; }
+        .contexa-actions { margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap; }
+        .btn-contexa {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 10px 20px; border-radius: 10px; text-decoration: none;
+            font-size: 0.82rem; font-weight: 600; transition: all 0.25s;
+        }
+        .btn-contexa.primary {
+            background: rgba(93,164,224,0.2); color: var(--accent-blue);
+            border: 1px solid rgba(93,164,224,0.35);
+        }
+        .btn-contexa.primary:hover { background: rgba(93,164,224,0.35); transform: translateY(-1px); }
+        .btn-contexa.danger {
+            background: rgba(239,68,68,0.12); color: #fca5a5;
+            border: 1px solid rgba(239,68,68,0.3);
+        }
+        .btn-contexa.danger:hover { background: rgba(239,68,68,0.25); transform: translateY(-1px); }
+        .annotation-tag {
+            font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
+            background: rgba(167,139,250,0.15); color: var(--accent-purple);
+            padding: 1px 6px; border-radius: 4px;
+        }
     </style>
 </head>
 <body>
 <div class="header">
-    <div>
+    <div class="header-left">
         <span class="legacy-badge">LEGACY SYSTEM</span>
-        <h1>Enterprise Dashboard</h1>
+        <h1>Enterprise Portal</h1>
     </div>
-    <div class="user-info">
-        <span th:if="${user}">
-            <strong th:text="${user.displayName}">User</strong>
-            <span class="badge badge-role" th:each="role : ${user.roles}" th:text="${role}">ROLE</span>
-            <span class="badge badge-dept" th:text="${user.department}">DEPT</span>
-            <span class="badge badge-method" th:text="${user.authMethod}">METHOD</span>
-        </span>
-        <a href="/legacy/logout">Logout</a>
+    <div class="user-bar" th:if="${user}">
+        <span class="user-name" th:text="${user.displayName}">User</span>
+        <span class="badge badge-role" th:each="role : ${user.roles}" th:text="${role}">ROLE</span>
+        <span class="badge badge-dept" th:text="${user.department}">DEPT</span>
+        <span class="badge badge-method" th:text="${user.authMethod}">AUTH</span>
+        <a href="/legacy/logout" class="btn-logout">Logout</a>
     </div>
 </div>
 
-<div class="cards">
-    <div class="card">
-        <h2>Legacy Dashboard</h2>
-        <p>This page is protected by the legacy authentication system (LegacyAuthFilter).
-           No Spring Security, no Contexa involvement.
-           Your legacy security works exactly as before.</p>
+<div class="main">
+    <div class="section-title">Legacy System <span class="title-badge legacy">NO SPRING SECURITY</span></div>
+    <div class="cards">
+        <div class="card">
+            <div class="card-icon">&#128203;</div>
+            <h3>Dashboard</h3>
+            <p>Protected by LegacyAuthFilter (servlet filter).
+               No Spring Security, no Contexa involvement.
+               Your legacy security works exactly as before.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">&#128272;</div>
+            <h3>Admin Panel</h3>
+            <p>Restricted to ADMIN role via <code>@LegacyRole</code> annotation
+               and LegacyAuthorizationInterceptor.</p>
+            <a href="/legacy/admin" class="btn-action btn-legacy">Open Admin Panel</a>
+        </div>
+        <div class="card">
+            <div class="card-icon">&#128273;</div>
+            <h3>API Token Auth</h3>
+            <p>API endpoints authenticated via X-Auth-Token header.</p>
+            <code class="card-code">curl -H "X-Auth-Token: tok-admin-a1b2c3d4e5f6" http://localhost:9090/legacy/dashboard</code>
+        </div>
     </div>
 
-    <div class="card">
-        <h2>Legacy Admin Panel</h2>
-        <p>Restricted to ADMIN role via @LegacyRole annotation and LegacyAuthorizationInterceptor.</p>
-        <a href="/legacy/admin" class="api-link">Open Admin Panel</a>
-    </div>
-
-    <div class="card">
-        <h2>Legacy API (Token Auth)</h2>
-        <p>API endpoints authenticated via X-Auth-Token header. Legacy token-based auth.</p>
-        <code style="display:block; margin-top:8px; padding:8px; background:#f5f5f5; border-radius:4px; font-size:0.8rem; color:#333;">
-            curl -H "X-Auth-Token: tok-admin-a1b2c3d4e5f6" http://localhost:9090/legacy/dashboard
-        </code>
+    <div class="section-title">Contexa AI Zero Trust <span class="title-badge contexa">@Protectable</span></div>
+    <div class="contexa-section">
+        <h2>AI-Protected Resources</h2>
+        <p>The following APIs are protected by <span class="annotation-tag">@Protectable</span> annotation.
+           Your legacy login is automatically bridged to Contexa via AuthBridge.
+           AI analyzes every access and can <strong>CHALLENGE</strong> or <strong>BLOCK</strong> suspicious behavior.</p>
+        <div class="contexa-actions">
+            <button onclick="fetchProtected('/api/customers', 'result-panel')" class="btn-contexa primary">
+                <span class="annotation-tag">@Protectable</span> Customer List
+            </button>
+            <button onclick="fetchProtected('/api/customers/export', 'result-panel')" class="btn-contexa danger">
+                <span class="annotation-tag">@Protectable(sync)</span> Customer Export
+            </button>
+        </div>
+        <div id="result-panel" class="result-panel" style="display:none;"></div>
     </div>
 </div>
 
-<div class="contexa-section">
-    <span class="contexa-badge">CONTEXA AI ZERO TRUST</span>
-    <h2>Contexa Protected APIs</h2>
-    <p>The following APIs are protected by Contexa @Protectable annotation.
-       Your legacy login is automatically bridged to Contexa via AuthBridge.
-       AI analyzes every access and can CHALLENGE or BLOCK suspicious behavior.</p>
-    <div style="margin-top: 16px; display: flex; gap: 12px;">
-        <a href="/api/customers" class="api-link" style="background: rgba(93,164,224,0.3);">
-            @Protectable Customer List</a>
-        <a href="/api/customers/export" class="api-link" style="background: rgba(220,38,38,0.3);">
-            @Protectable(sync) Customer Export</a>
-    </div>
-</div>
+<style>
+    .btn-contexa { cursor: pointer; }
+    .result-panel {
+        margin-top: 20px; padding: 16px 20px;
+        background: rgba(0,0,0,0.35); border: 1px solid rgba(55,80,120,0.3);
+        border-radius: 10px; font-family: 'JetBrains Mono', monospace;
+        font-size: 0.8rem; color: #8fc8f0; max-height: 400px; overflow-y: auto;
+        white-space: pre-wrap; word-break: break-all;
+    }
+    .result-panel .result-header {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(55,80,120,0.25);
+    }
+    .result-panel .status-ok { color: #22c55e; font-weight: 700; }
+    .result-panel .status-err { color: #ef4444; font-weight: 700; }
+    .result-panel .status-challenge { color: #f59e0b; font-weight: 700; }
+    .result-panel table { width: 100%; border-collapse: collapse; }
+    .result-panel th {
+        text-align: left; padding: 6px 10px; color: var(--accent-blue);
+        border-bottom: 1px solid rgba(55,80,120,0.3); font-size: 0.75rem;
+    }
+    .result-panel td {
+        padding: 6px 10px; border-bottom: 1px solid rgba(55,80,120,0.12);
+        font-size: 0.78rem; color: #b0c4de;
+    }
+</style>
+
+<script src="/js/contexa-mfa-sdk.js"></script>
+<script>
+function fetchProtected(url, panelId) {
+    var panel = document.getElementById(panelId);
+    panel.style.display = 'block';
+    panel.innerHTML = '<div style="color:#8899b4;">Loading...</div>';
+
+    fetch(url, { headers: { 'Accept': 'application/json' } })
+        .then(function(response) {
+            if (response.status === 403 || response.status === 401) {
+                return response.text().then(function(text) {
+                    panel.innerHTML = '<div class="result-header"><span class="status-challenge">CHALLENGE / BLOCK</span><span>HTTP ' + response.status + '</span></div>' +
+                        '<div>' + escapeHtml(text) + '</div>';
+                });
+            }
+            if (!response.ok) {
+                return response.text().then(function(text) {
+                    panel.innerHTML = '<div class="result-header"><span class="status-err">ERROR</span><span>HTTP ' + response.status + '</span></div>' +
+                        '<div>' + escapeHtml(text) + '</div>';
+                });
+            }
+            return response.json().then(function(data) {
+                if (Array.isArray(data)) {
+                    renderTable(panel, data);
+                } else {
+                    panel.innerHTML = '<div class="result-header"><span class="status-ok">ALLOW</span><span>HTTP 200</span></div>' +
+                        '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                }
+            });
+        })
+        .catch(function(err) {
+            panel.innerHTML = '<div class="result-header"><span class="status-err">NETWORK ERROR</span></div>' +
+                '<div>' + escapeHtml(err.message) + '</div>';
+        });
+}
+
+function renderTable(panel, data) {
+    if (data.length === 0) {
+        panel.innerHTML = '<div class="status-ok">ALLOW - Empty result</div>';
+        return;
+    }
+    var keys = Object.keys(data[0]);
+    var html = '<div class="result-header"><span class="status-ok">ALLOW</span><span>' + data.length + ' records</span></div>';
+    html += '<table><thead><tr>';
+    keys.forEach(function(k) { html += '<th>' + k + '</th>'; });
+    html += '</tr></thead><tbody>';
+    data.forEach(function(row) {
+        html += '<tr>';
+        keys.forEach(function(k) { html += '<td>' + escapeHtml(String(row[k] || '')) + '</td>'; });
+        html += '</tr>';
+    });
+    html += '</tbody></table>';
+    panel.innerHTML = html;
+}
+
+function escapeHtml(text) {
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(text));
+    return div.innerHTML;
+}
+</script>
 </body>
 </html>
