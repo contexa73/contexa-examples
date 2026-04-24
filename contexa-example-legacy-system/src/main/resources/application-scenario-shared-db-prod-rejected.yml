@@ -1,0 +1,39 @@
+server:
+  port: ${SCENARIO_PORT:19085}
+
+contexa:
+  infrastructure:
+    mode: standalone
+  saas:
+    enabled: false
+  iam:
+    seed:
+      enabled: false
+  datasource:
+    url: jdbc:h2:mem:shared_customer_contexa_prod;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+    isolation:
+      allow-shared-application-datasource: true
+      shared-application-datasource-risk-accepted: true
+  jpa:
+    hibernate:
+      ddl-auto: update
+  bridge:
+    enabled: true
+
+security:
+  zerotrust:
+    enabled: true
+    mode: SHADOW
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:shared_customer_contexa_prod;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none

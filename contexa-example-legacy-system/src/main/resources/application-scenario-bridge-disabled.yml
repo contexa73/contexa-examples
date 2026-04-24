@@ -1,0 +1,36 @@
+server:
+  port: ${SCENARIO_PORT:19090}
+
+contexa:
+  infrastructure:
+    mode: standalone
+  saas:
+    enabled: false
+  iam:
+    seed:
+      enabled: false
+  datasource:
+    url: jdbc:h2:mem:contexa_agent_bridge_disabled;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+  bridge:
+    enabled: false
+
+security:
+  zerotrust:
+    enabled: true
+    mode: SHADOW
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:legacy_customer_bridge_disabled;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
