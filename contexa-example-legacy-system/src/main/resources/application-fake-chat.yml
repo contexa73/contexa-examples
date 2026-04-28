@@ -1,0 +1,5 @@
+contexa:
+  llm:
+    selection:
+      chat:
+        mode: spring-primary

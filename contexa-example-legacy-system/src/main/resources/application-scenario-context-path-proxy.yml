@@ -1,0 +1,39 @@
+server:
+  port: ${SCENARIO_PORT:19088}
+  servlet:
+    context-path: /customer-app
+  forward-headers-strategy: framework
+
+contexa:
+  infrastructure:
+    mode: standalone
+  saas:
+    enabled: false
+  iam:
+    seed:
+      enabled: false
+  datasource:
+    url: jdbc:h2:mem:contexa_agent_context_path_proxy;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+  bridge:
+    enabled: true
+
+security:
+  zerotrust:
+    enabled: true
+    mode: SHADOW
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:legacy_customer_context_path_proxy;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none

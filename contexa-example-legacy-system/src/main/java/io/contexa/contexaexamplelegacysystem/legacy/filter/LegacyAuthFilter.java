@@ -3,6 +3,8 @@ package io.contexa.contexaexamplelegacysystem.legacy.filter;
 import io.contexa.contexaexamplelegacysystem.legacy.model.LegacyUser;
 import io.contexa.contexaexamplelegacysystem.legacy.model.LegacyUserSession;
 import io.contexa.contexaexamplelegacysystem.legacy.service.LegacyUserService;
+import io.contexa.contexacommon.security.bridge.handoff.ContexaAuthBridge;
+import io.contexa.contexacommon.security.bridge.handoff.ContexaAuthHandoff;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -15,6 +17,8 @@ import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.time.ZoneOffset;
+import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.UUID;
 
@@ -44,7 +48,10 @@ public class LegacyAuthFilter implements Filter {
 
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
-        String path = request.getRequestURI();
+        String path = request.getServletPath();
+        if (path == null || path.isBlank()) {
+            path = request.getRequestURI();
+        }
 
         // Handle login POST (before public path check)
         if ("POST".equals(request.getMethod()) && "/legacy/login".equals(path)) {
@@ -76,7 +83,7 @@ public class LegacyAuthFilter implements Filter {
         if (apiToken != null && !apiToken.isBlank()) {
             LegacyUser user = userService.authenticateByToken(apiToken);
             if (user != null) {
-                createSession(request, user, "TOKEN");
+                createSession(request, response, user, "TOKEN");
                 chain.doFilter(request, response);
                 return;
             }
@@ -90,7 +97,7 @@ public class LegacyAuthFilter implements Filter {
         if (rememberMeCookie != null) {
             LegacyUser user = userService.authenticateByRememberMe(rememberMeCookie.getValue());
             if (user != null) {
-                createSession(request, user, "REMEMBER_ME");
+                createSession(request, response, user, "REMEMBER_ME");
                 chain.doFilter(request, response);
                 return;
             }
@@ -98,7 +105,7 @@ public class LegacyAuthFilter implements Filter {
 
         // Protected path without authentication
         if (isProtectedPath(path)) {
-            response.sendRedirect("/legacy/login");
+            response.sendRedirect(request.getContextPath() + "/legacy/login");
             return;
         }
 
@@ -113,11 +120,11 @@ public class LegacyAuthFilter implements Filter {
 
         LegacyUser user = userService.authenticate(username, password);
         if (user == null) {
-            response.sendRedirect("/legacy/login?error=invalid");
+            response.sendRedirect(request.getContextPath() + "/legacy/login?error=invalid");
             return;
         }
 
-        createSession(request, user, "FORM");
+        createSession(request, response, user, "FORM");
 
         // Set remember-me cookie if requested
         if ("on".equals(rememberMe)) {
@@ -132,7 +139,7 @@ public class LegacyAuthFilter implements Filter {
 
         log.info("[Legacy Auth] Login success: user={}, method=FORM, dept={}",
                 user.username(), user.department());
-        response.sendRedirect("/legacy/dashboard");
+        response.sendRedirect(request.getContextPath() + "/legacy/dashboard");
     }
 
     private void handleLogout(HttpServletRequest request, HttpServletResponse response)
@@ -152,10 +159,14 @@ public class LegacyAuthFilter implements Filter {
         cookie.setPath("/");
         response.addCookie(cookie);
 
-        response.sendRedirect("/legacy/login?logout=true");
+        response.sendRedirect(request.getContextPath() + "/legacy/login?logout=true");
     }
 
-    private void createSession(HttpServletRequest request, LegacyUser user, String authMethod) {
+    private void createSession(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            LegacyUser user,
+            String authMethod) {
         LegacyUserSession userSession = new LegacyUserSession(
                 user.userId(), user.username(), user.displayName(),
                 user.roles(), request.getRemoteAddr(), authMethod,
@@ -163,9 +174,46 @@ public class LegacyAuthFilter implements Filter {
 
         HttpSession session = request.getSession(true);
         session.setAttribute(SESSION_USER_KEY, userSession);
+        handoffAuthenticatedPrincipal(request, response, userSession);
 
         log.info("[Legacy Auth] Session created: user={}, method={}, roles={}",
                 user.username(), authMethod, user.roles());
+    }
+
+    private void handoffAuthenticatedPrincipal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            LegacyUserSession userSession) {
+        try {
+            LinkedHashMap<String, Object> attributes = new LinkedHashMap<>();
+            attributes.put("principalId", userSession.getUserId());
+            attributes.put("displayName", userSession.getDisplayName());
+            attributes.put("department", userSession.getDepartment());
+            attributes.put("loginIp", userSession.getLoginIp());
+            attributes.put("accessLevel", userSession.getAccessLevel());
+            attributes.put("authenticationTime", userSession.getLoginTime().toInstant(ZoneOffset.UTC));
+            attributes.put("bridgeAuthenticationSource", "LEGACY_FILTER_HANDOFF");
+            attributes.put("authMethod", userSession.getAuthMethod());
+
+            ContexaAuthHandoff handoff = ContexaAuthHandoff
+                    .of(userSession, userSession.getRoles(), attributes)
+                    .withAuthenticationType(userSession.getAuthMethod())
+                    .withAuthenticationAssurance(resolveAuthenticationAssurance(userSession.getAuthMethod()))
+                    .withMfaVerified(false);
+            ContexaAuthBridge.handoff(request, response, handoff);
+        } catch (Exception ex) {
+            log.error("[Legacy Auth] Failed to handoff authenticated principal to Contexa bridge.", ex);
+        }
+    }
+
+    private String resolveAuthenticationAssurance(String authMethod) {
+        if ("TOKEN".equalsIgnoreCase(authMethod)) {
+            return "HIGH";
+        }
+        if ("REMEMBER_ME".equalsIgnoreCase(authMethod)) {
+            return "LOW";
+        }
+        return "STANDARD";
     }
 
     private boolean isPublicPath(String path) {
