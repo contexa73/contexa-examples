@@ -4,6 +4,13 @@ server:
 contexa:
   infrastructure:
     mode: standalone
+  vectorstore:
+    pgvector:
+      table-name: vector_store
+      index-type: HNSW
+      distance-type: COSINE_DISTANCE
+      dimensions: 1024
+      initialize-schema: true
 
 spring:
   application:
@@ -34,11 +41,3 @@ spring:
       embedding:
         enabled: true
         model: mxbai-embed-large
-
-    vectorstore:
-      pgvector:
-        table-name: vector_store
-        index-type: HNSW
-        distance-type: COSINE_DISTANCE
-        dimensions: 1024
-        initialize-schema: true

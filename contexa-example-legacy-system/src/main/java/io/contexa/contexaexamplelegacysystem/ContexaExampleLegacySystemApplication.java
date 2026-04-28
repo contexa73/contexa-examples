@@ -14,9 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * Legacy security (LegacyAuthFilter, LegacyAuthorizationInterceptor) is untouched.
  */
 @EnableAISecurity(
-        mode = SecurityMode.SANDBOX,
-        authBridge = SessionAuthBridge.class,
-        sessionUserAttribute = "legacyUser"
+        mode = SecurityMode.SANDBOX
 )
 @SpringBootApplication
 public class ContexaExampleLegacySystemApplication {

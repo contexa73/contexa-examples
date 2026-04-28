@@ -1,5 +1,6 @@
 package io.contexa.contexaexamplelegacysystem.legacy.controller;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,8 +13,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class LegacyAuthController {
 
     @GetMapping("/")
-    public String home() {
-        return "redirect:/legacy/login";
+    public String home(Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            return "redirect:/legacy/admin";
+        }else{
+            return "redirect:/legacy/login";
+        }
     }
 
     @GetMapping("/legacy/login")
