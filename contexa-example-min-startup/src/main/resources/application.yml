@@ -1,0 +1,19 @@
+server:
+  port: 8099
+
+contexa:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/contexa
+    username: contexa
+    password: contexa1234!@#
+    driver-class-name: org.postgresql.Driver
+
+spring:
+  application:
+    name: contexa-example-min-startup
+
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.JpaRepositoriesAutoConfiguration

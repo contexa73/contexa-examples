@@ -1,9 +1,10 @@
 package io.contexa.example.iampermission.evaluator;
 
-import io.contexa.contexaiam.security.xacml.pdp.evaluation.method.DomainPermissionEvaluator;
+import io.contexa.contexaiam.security.xacml.pdp.evaluation.method.AbstractDomainPermissionEvaluator;
 import io.contexa.example.iampermission.domain.Document;
 import io.contexa.example.iampermission.repository.DocumentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -25,11 +26,27 @@ import java.util.Set;
  */
 @Component
 @RequiredArgsConstructor
-public class DocumentPermissionEvaluator implements DomainPermissionEvaluator {
+public class DocumentPermissionEvaluator extends AbstractDomainPermissionEvaluator {
 
     private static final Set<String> SUPPORTED_PERMISSIONS = Set.of("READ", "CREATE", "UPDATE", "DELETE");
 
     private final DocumentRepository documentRepository;
+    private final ApplicationContext applicationContext;
+
+    @Override
+    protected String domain() {
+        return "DOCUMENT";
+    }
+
+    @Override
+    protected String repositoryBeanName() {
+        return "documentRepository";
+    }
+
+    @Override
+    protected ApplicationContext getApplicationContext() {
+        return this.applicationContext;
+    }
 
     @Override
     public boolean supportsTargetType(String targetType) {

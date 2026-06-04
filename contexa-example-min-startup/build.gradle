@@ -1,0 +1,9 @@
+// Minimal-startup verification subproject. Inherits all dependencies from
+// the parent contexa-examples build.gradle, which adds:
+//   - ai.ctxa:spring-boot-starter-contexa:0.1.0
+//   - spring-boot-starter-web
+//   - spring-boot-starter-data-jpa
+//   - postgresql, h2
+// We deliberately do NOT add any spring-ai-* dependency here. The whole
+// point is to capture, end-to-end, the exact runtime errors a customer
+// gets when they only add the contexa starter and declare @EnableAISecurity.

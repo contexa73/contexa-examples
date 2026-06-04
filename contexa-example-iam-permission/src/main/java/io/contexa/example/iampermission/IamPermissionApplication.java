@@ -3,6 +3,7 @@ package io.contexa.example.iampermission;
 import io.contexa.contexacommon.annotation.EnableAISecurity;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
  * Permission evaluator example.
@@ -10,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 @EnableAISecurity
+@EnableJpaRepositories(basePackages = "io.contexa.example.iampermission.repository")
 public class IamPermissionApplication {
 
     public static void main(String[] args) {

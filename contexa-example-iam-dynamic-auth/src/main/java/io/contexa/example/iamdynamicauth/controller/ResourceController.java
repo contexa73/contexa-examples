@@ -72,9 +72,14 @@ public class ResourceController {
 
     private Map<String, Object> buildResponse(String resourceId, String securityLevel, String policyDescription) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        List<String> authorities = auth.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .toList();
+        String username = "anonymousUser";
+        List<String> authorities = List.of("ROLE_ANONYMOUS");
+        if (auth != null) {
+            username = auth.getName();
+            authorities = auth.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .toList();
+        }
 
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("success", true);
@@ -82,7 +87,7 @@ public class ResourceController {
         response.put("resourceId", resourceId);
         response.put("securityLevel", securityLevel);
         response.put("policyDescription", policyDescription);
-        response.put("user", auth.getName());
+        response.put("user", username);
         response.put("authorities", authorities);
         return response;
     }

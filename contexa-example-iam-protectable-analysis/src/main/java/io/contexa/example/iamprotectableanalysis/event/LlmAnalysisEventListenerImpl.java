@@ -17,8 +17,8 @@ public class LlmAnalysisEventListenerImpl implements LlmAnalysisEventListener {
     private final LlmAnalysisEventPublisher eventPublisher;
 
     @Override
-    public void onContextCollected(String userId, String requestPath, String analysisRequirement) {
-        eventPublisher.publishContextCollected(userId, requestPath, analysisRequirement);
+    public void onContextCollected(String userId, String requestPath) {
+        eventPublisher.publishContextCollected(userId, requestPath, "N/A");
     }
 
     @Override
@@ -51,5 +51,20 @@ public class LlmAnalysisEventListenerImpl implements LlmAnalysisEventListener {
     @Override
     public void onError(String userId, String message) {
         eventPublisher.publishError(userId, message);
+    }
+
+    @Override
+    public void onLayer1Complete(String userId, String action, String reasoning, String mitre, Long elapsedMs) {
+        onLayer1Complete(userId, action, null, null, reasoning, mitre, elapsedMs);
+    }
+
+    @Override
+    public void onLayer2Complete(String userId, String action, String reasoning, String mitre, Long elapsedMs) {
+        onLayer2Complete(userId, action, null, null, reasoning, mitre, elapsedMs);
+    }
+
+    @Override
+    public void onEscalateProtectionTriggered(String userId, String requestPath, int escalateCount, int totalAnalysisCount) {
+        // No-op for SSE in this example
     }
 }

@@ -32,7 +32,7 @@ ollama pull mxbai-embed-large
 All modules depend on `spring-boot-starter-contexa` from Maven Local:
 
 ```
-implementation 'io.contexa:spring-boot-starter-contexa:0.1.0'
+implementation 'ai.ctxa:spring-boot-starter-contexa:0.1.0'
 ```
 
 ---

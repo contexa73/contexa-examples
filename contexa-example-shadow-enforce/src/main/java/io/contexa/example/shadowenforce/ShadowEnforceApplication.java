@@ -3,6 +3,7 @@ package io.contexa.example.shadowenforce;
 import io.contexa.contexacommon.annotation.EnableAISecurity;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
  * Demonstrates Shadow Mode vs Enforce Mode transition.
@@ -23,6 +24,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 @EnableAISecurity
+@EnableJpaRepositories(basePackages = "io.contexa.example.shadowenforce.domain")
 public class ShadowEnforceApplication {
 
     public static void main(String[] args) {

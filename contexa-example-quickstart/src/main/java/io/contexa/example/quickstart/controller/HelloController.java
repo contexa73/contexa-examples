@@ -1,5 +1,6 @@
 package io.contexa.example.quickstart.controller;
 
+import io.contexa.contexacommon.annotation.Protectable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +16,7 @@ import java.util.Map;
 @RestController
 public class HelloController {
 
+    @Protectable
     @GetMapping("/api/hello")
     public Map<String, String> hello() {
         return Map.of(

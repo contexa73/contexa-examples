@@ -14,14 +14,16 @@ VALUES
 
 (30003, 'URL_LAB_PAGE_ACCESS',
  'Lab test page access - authenticated users only',
- 'ALLOW', 100, true, 'MANUAL', 'NOT_REQUIRED', CURRENT_TIMESTAMP);
+ 'ALLOW', 100, true, 'MANUAL', 'NOT_REQUIRED', CURRENT_TIMESTAMP)
+ON CONFLICT (id) DO NOTHING;
 
 
 INSERT INTO POLICY_RULE (id, policy_id, description)
 VALUES
 (30001, 30001, 'Public resource rule'),
 (30002, 30002, 'Lab API rule - action-based access'),
-(30003, 30003, 'Lab page rule - authentication check');
+(30003, 30003, 'Lab page rule - authentication check')
+ON CONFLICT (id) DO NOTHING;
 
 
 INSERT INTO POLICY_CONDITION (id, rule_id, condition_expression, authorization_phase, description)
@@ -39,11 +41,13 @@ VALUES
 (30003, 30003,
  'isAuthenticated()',
  'PRE_AUTHORIZE',
- 'Authenticated users for test pages');
+ 'Authenticated users for test pages')
+ON CONFLICT (id) DO NOTHING;
 
 
-INSERT INTO POLICY_TARGET (id, policy_id, target_type, target_identifier, http_method)
+INSERT INTO POLICY_TARGET (id, policy_id, target_type, target_identifier, http_method, target_order)
 VALUES
-(30001, 30001, 'URL', '/api/health', 'ANY'),
-(30002, 30002, 'URL', '/api/lab/**', 'ANY'),
-(30003, 30003, 'URL', '/lab/**', 'ANY');
+(30001, 30001, 'URL', '/api/health', 'ANY', 0),
+(30002, 30002, 'URL', '/api/lab/**', 'ANY', 0),
+(30003, 30003, 'URL', '/lab/**', 'ANY', 0)
+ON CONFLICT (id) DO NOTHING;

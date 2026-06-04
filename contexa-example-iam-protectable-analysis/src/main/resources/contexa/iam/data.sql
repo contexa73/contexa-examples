@@ -34,7 +34,8 @@ VALUES
 
 (10005, 'TEST_BULK_DATA_ACCESS',
  'Bulk data - BLOCK action rejected, MONITOR default when pending',
- 'ALLOW', 100, true, 'MANUAL', 'NOT_REQUIRED', CURRENT_TIMESTAMP);
+ 'ALLOW', 100, true, 'MANUAL', 'NOT_REQUIRED', CURRENT_TIMESTAMP)
+ON CONFLICT (id) DO NOTHING;
 
 
 -- 2. Policy Rules
@@ -44,7 +45,8 @@ VALUES
 (10002, 10002, 'Normal data rule - action-based access control'),
 (10003, 10003, 'Sensitive data rule - analysis completion required'),
 (10004, 10004, 'Critical data rule - ADMIN + ALLOW only'),
-(10005, 10005, 'Bulk data rule - default MONITOR allowed');
+(10005, 10005, 'Bulk data rule - default MONITOR allowed')
+ON CONFLICT (id) DO NOTHING;
 
 
 -- 3. Policy Conditions (SpEL)
@@ -73,28 +75,30 @@ VALUES
 (10005, 10005,
  '#trust.hasActionOrDefault(''MONITOR'', ''ALLOW'', ''MONITOR'')',
  'PRE_AUTHORIZE',
- 'BLOCK rejected - MONITOR default when analysis pending');
+ 'BLOCK rejected - MONITOR default when analysis pending')
+ON CONFLICT (id) DO NOTHING;
 
 
 -- 4. Policy Targets (method mapping)
-INSERT INTO POLICY_TARGET (id, policy_id, target_type, target_identifier, http_method)
+INSERT INTO POLICY_TARGET (id, policy_id, target_type, target_identifier, http_method, target_order)
 VALUES
 (10001, 10001, 'METHOD',
  'io.contexa.example.iamprotectableanalysis.service.TestSecurityService.getPublicData(String)',
- 'ANY'),
+ 'ANY', 0),
 
 (10002, 10002, 'METHOD',
  'io.contexa.example.iamprotectableanalysis.service.TestSecurityService.getNormalData(String)',
- 'ANY'),
+ 'ANY', 0),
 
 (10003, 10003, 'METHOD',
  'io.contexa.example.iamprotectableanalysis.service.TestSecurityService.getSensitiveData(String)',
- 'ANY'),
+ 'ANY', 0),
 
 (10004, 10004, 'METHOD',
  'io.contexa.example.iamprotectableanalysis.service.TestSecurityService.getCriticalData(String)',
- 'ANY'),
+ 'ANY', 0),
 
 (10005, 10005, 'METHOD',
  'io.contexa.example.iamprotectableanalysis.service.TestSecurityService.getBulkData()',
- 'ANY');
+ 'ANY', 0)
+ON CONFLICT (id) DO NOTHING;

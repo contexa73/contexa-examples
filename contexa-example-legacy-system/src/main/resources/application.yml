@@ -10,9 +10,9 @@ contexa:
     seed:
       enabled: false
   datasource:
-    url: jdbc:postgresql://localhost:15432/contexa_agent
+    url: jdbc:postgresql://localhost:5432/contexa
     username: ${CONTEXA_DB_USERNAME:contexa}
-    password: ${CONTEXA_DB_PASSWORD:contexa1234}
+    password: ${CONTEXA_DB_PASSWORD:contexa1234!@#}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -29,10 +29,10 @@ spring:
   application:
     name: legacy-system-with-contexa
   datasource:
-    url: jdbc:postgresql://localhost:5432/legacy_customer
-    username: ${LEGACY_DB_USERNAME:legacy}
-    password: ${LEGACY_DB_PASSWORD:legacy1234}
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:h2:mem:legacy_customer;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
   thymeleaf:
     cache: false
 

@@ -46,7 +46,8 @@ VALUES
 -- Admin resources: ADMIN + strict ALLOW only
 (20004, 'URL_ADMIN_RESOURCE_ACCESS',
  'Admin resource access - ADMIN role + AI analysis ALLOW only',
- 'ALLOW', 100, true, 'MANUAL', 'NOT_REQUIRED', CURRENT_TIMESTAMP);
+ 'ALLOW', 100, true, 'MANUAL', 'NOT_REQUIRED', CURRENT_TIMESTAMP)
+ON CONFLICT (id) DO NOTHING;
 
 
 -- ============================================================================
@@ -58,7 +59,8 @@ VALUES
 (20001, 20001, 'Public resource rule - authentication check'),
 (20002, 20002, 'Normal resource rule - action-based access control'),
 (20003, 20003, 'Sensitive resource rule - analysis completion required'),
-(20004, 20004, 'Admin resource rule - ADMIN + strict ALLOW');
+(20004, 20004, 'Admin resource rule - ADMIN + strict ALLOW')
+ON CONFLICT (id) DO NOTHING;
 
 
 -- ============================================================================
@@ -89,16 +91,18 @@ VALUES
 (20004, 20004,
  'hasRole(''ADMIN'') and #trust.requiresAnalysisWithAction(''ALLOW'')',
  'PRE_AUTHORIZE',
- 'ADMIN role + AI analysis ALLOW action only');
+ 'ADMIN role + AI analysis ALLOW action only')
+ON CONFLICT (id) DO NOTHING;
 
 
 -- ============================================================================
 -- 4. Policy Targets (URL mapping)
 -- ============================================================================
 
-INSERT INTO POLICY_TARGET (id, policy_id, target_type, target_identifier, http_method)
+INSERT INTO POLICY_TARGET (id, policy_id, target_type, target_identifier, http_method, target_order)
 VALUES
-(20001, 20001, 'URL', '/api/resources/public/**', 'ANY'),
-(20002, 20002, 'URL', '/api/resources/normal/**', 'ANY'),
-(20003, 20003, 'URL', '/api/resources/sensitive/**', 'ANY'),
-(20004, 20004, 'URL', '/api/resources/admin/**', 'ANY');
+(20001, 20001, 'URL', '/api/resources/public/**', 'ANY', 0),
+(20002, 20002, 'URL', '/api/resources/normal/**', 'ANY', 0),
+(20003, 20003, 'URL', '/api/resources/sensitive/**', 'ANY', 0),
+(20004, 20004, 'URL', '/api/resources/admin/**', 'ANY', 0)
+ON CONFLICT (id) DO NOTHING;

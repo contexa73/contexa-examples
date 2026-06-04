@@ -4,19 +4,27 @@ server:
 contexa:
   infrastructure:
     mode: standalone
+  datasource:
+    url: jdbc:postgresql://localhost:5432/contexa
+    username: ${DB_USERNAME:contexa}
+    password: ${DB_PASSWORD:contexa1234!@#}
+    driver-class-name: org.postgresql.Driver
+    isolation:
+      contexa-owned-application: true
 
 spring:
   application:
     name: contexa-example-iam-permission
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/contexa
-    username: ${DB_USERNAME:admin}
-    password: ${DB_PASSWORD:1111}
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
 
   jpa:
-    database: POSTGRESQL
+    database: H2
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: update
 

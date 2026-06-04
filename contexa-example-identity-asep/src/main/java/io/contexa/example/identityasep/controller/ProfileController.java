@@ -29,15 +29,15 @@ public class ProfileController {
             @SecurityPrincipal Object principal,
             @AuthenticationObject Authentication auth) {
 
-        List<String> authorities = auth.getAuthorities().stream()
+        List<String> authorities = auth != null ? auth.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .toList();
+                .toList() : List.of("ROLE_ANONYMOUS");
 
         Map<String, Object> response = new HashMap<>();
         response.put("principal", principal != null ? principal.toString() : "anonymous");
-        response.put("username", auth.getName());
+        response.put("username", auth != null ? auth.getName() : "anonymousUser");
         response.put("authorities", authorities);
-        response.put("authenticated", auth.isAuthenticated());
+        response.put("authenticated", auth != null && auth.isAuthenticated());
         response.put("principalClass", principal != null ? principal.getClass().getSimpleName() : "null");
         return response;
     }

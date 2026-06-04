@@ -14,14 +14,16 @@ VALUES
 
 (32003, 'URL_LLM_PAGE_ACCESS',
  'LLM test page access - authenticated users only',
- 'ALLOW', 100, true, 'MANUAL', 'NOT_REQUIRED', CURRENT_TIMESTAMP);
+ 'ALLOW', 100, true, 'MANUAL', 'NOT_REQUIRED', CURRENT_TIMESTAMP)
+ON CONFLICT (id) DO NOTHING;
 
 
 INSERT INTO POLICY_RULE (id, policy_id, description)
 VALUES
 (32001, 32001, 'Public resource rule'),
 (32002, 32002, 'LLM API rule - action-based access'),
-(32003, 32003, 'LLM page rule - authentication check');
+(32003, 32003, 'LLM page rule - authentication check')
+ON CONFLICT (id) DO NOTHING;
 
 
 INSERT INTO POLICY_CONDITION (id, rule_id, condition_expression, authorization_phase, description)
@@ -39,11 +41,13 @@ VALUES
 (32003, 32003,
  'isAuthenticated()',
  'PRE_AUTHORIZE',
- 'Authenticated users for test pages');
+ 'Authenticated users for test pages')
+ON CONFLICT (id) DO NOTHING;
 
 
-INSERT INTO POLICY_TARGET (id, policy_id, target_type, target_identifier, http_method)
+INSERT INTO POLICY_TARGET (id, policy_id, target_type, target_identifier, http_method, target_order)
 VALUES
-(32001, 32001, 'URL', '/api/health', 'ANY'),
-(32002, 32002, 'URL', '/api/llm/**', 'ANY'),
-(32003, 32003, 'URL', '/llm/**', 'ANY');
+(32001, 32001, 'URL', '/api/health', 'ANY', 0),
+(32002, 32002, 'URL', '/api/llm/**', 'ANY', 0),
+(32003, 32003, 'URL', '/llm/**', 'ANY', 0)
+ON CONFLICT (id) DO NOTHING;
