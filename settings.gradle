@@ -1,10 +1,5 @@
 rootProject.name = 'contexa-examples'
 
-def contexaSource = file('../contexa')
-if (contexaSource.exists()) {
-    includeBuild(contexaSource)
-}
-
 include 'contexa-example-quickstart'
 include 'contexa-example-legacy-system'
 include 'contexa-example-legacy-dependency-only'

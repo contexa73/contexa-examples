@@ -1,6 +1,6 @@
 // Minimal-startup verification subproject. Inherits all dependencies from
 // the parent contexa-examples build.gradle, which adds:
-//   - ai.ctxa:spring-boot-starter-contexa:0.1.0
+//   - ai.ctxa:spring-boot-starter-contexa:0.1.0-SNAPSHOT
 //   - spring-boot-starter-web
 //   - spring-boot-starter-data-jpa
 //   - postgresql, h2

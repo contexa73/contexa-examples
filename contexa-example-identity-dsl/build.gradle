@@ -1,6 +1,6 @@
 dependencies {
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.redisson:redisson:3.48.0'
-    implementation 'ai.ctxa:spring-boot-starter-contexa:0.1.0'
+    implementation 'ai.ctxa:spring-boot-starter-contexa:0.1.0-SNAPSHOT'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 }

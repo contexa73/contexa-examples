@@ -1,56 +1,56 @@
-server:
-  port: 8091
-
-contexa:
-  infrastructure:
-    mode: standalone
-  datasource:
-    url: jdbc:postgresql://localhost:5432/contexa
-    username: ${DB_USERNAME:contexa}
-    password: ${DB_PASSWORD:contexa1234!@#}
-    driver-class-name: org.postgresql.Driver
-    isolation:
-      contexa-owned-application: true
-
-spring:
-  application:
-    name: contexa-example-iam-protectable-analysis
-
-  datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
-
-  jpa:
-    database: H2
-    defer-datasource-initialization: true
-    hibernate:
-      ddl-auto: update
-
-  sql:
-    init:
-      mode: never
-
-  ai:
-    chat:
-      model:
-        priority: ollama
-
-    ollama:
-      base-url: http://127.0.0.1:11434
-      chat:
-        options:
-          model: qwen2.5:7b
-          keep-alive: "24h"
-      embedding:
-        enabled: true
-        model: mxbai-embed-large
-
-    vectorstore:
-      pgvector:
-        table-name: vector_store
-        index-type: HNSW
-        distance-type: COSINE_DISTANCE
-        dimensions: 1024
-        initialize-schema: true
+server:
+  port: 8091
+
+contexa:
+  infrastructure:
+    mode: standalone
+  datasource:
+    url: ${CONTEXA_DB_URL:${DB_URL:jdbc:postgresql://localhost:5432/contexa}}
+    username: ${CONTEXA_DB_USERNAME:${DB_USERNAME:contexa}}
+    password: ${CONTEXA_DB_PASSWORD:${DB_PASSWORD:contexa1234!@#}}
+    driver-class-name: ${CONTEXA_DB_DRIVER:org.postgresql.Driver}
+    isolation:
+      contexa-owned-application: true
+
+spring:
+  application:
+    name: contexa-example-iam-protectable-analysis
+
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    database: H2
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: update
+
+  sql:
+    init:
+      mode: never
+
+  ai:
+    chat:
+      model:
+        priority: ollama
+
+    ollama:
+      base-url: http://127.0.0.1:11434
+      chat:
+        options:
+          model: qwen2.5:7b
+          keep-alive: "24h"
+      embedding:
+        enabled: true
+        model: mxbai-embed-large
+
+    vectorstore:
+      pgvector:
+        table-name: vector_store
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
+        dimensions: 1024
+        initialize-schema: true

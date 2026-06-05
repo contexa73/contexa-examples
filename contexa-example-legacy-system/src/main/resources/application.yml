@@ -1,84 +1,84 @@
-server:
-  port: 9090
-
-contexa:
-  infrastructure:
-    mode: standalone
-  saas:
-    enabled: false
-  iam:
-    seed:
-      enabled: false
-  datasource:
-    url: jdbc:postgresql://localhost:5432/contexa
-    username: ${CONTEXA_DB_USERNAME:contexa}
-    password: ${CONTEXA_DB_PASSWORD:contexa1234!@#}
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update
-  bridge:
-    enabled: true
-
-security:
-  zerotrust:
-    enabled: true
-    mode: SHADOW
-
-spring:
-  application:
-    name: legacy-system-with-contexa
-  datasource:
-    url: jdbc:h2:mem:legacy_customer;DB_CLOSE_DELAY=-1
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
-  thymeleaf:
-    cache: false
-
-  auth:
-    urls:
-      factors:
-        passkey:
-          rp-id: localhost
-          rp-name: Contexa Security
-          allowed-origins: http://localhost:9090
-  ai:
-    ollama:
-      base-url: http://127.0.0.1:11434
-      embedding:
-        enabled: true
-        model: mxbai-embed-large
-      chat:
-        options:
-          model: qwen2.5:7b
-          keep-alive: "24h"
-    openai:
-      api-key: ${OPENAI_API_KEY:}
-      base-url: https://api.openai.com
-      chat:
-        options:
-          model: gpt-4o-mini
-          temperature: 0.3
-        enabled: true
-      embedding:
-        enabled: false
-        options:
-          model: text-embedding-3-small
-
-    anthropic:
-      api-key: ${ANTHROPIC_API_KEY:your-anthropic-api-key}
-      chat:
-        enabled: false
-
-  zero-trust:
-    enabled: true
-    ai:
-      chat:
-        model:
-          priority: openai,ollama
-
-logging:
-  level:
-    io.contexa: INFO
-    io.contexa.contexaexamplelegacysystem: DEBUG
+server:
+  port: 9090
+
+contexa:
+  infrastructure:
+    mode: standalone
+  saas:
+    enabled: false
+  iam:
+    seed:
+      enabled: false
+  datasource:
+    url: ${CONTEXA_DB_URL:${DB_URL:jdbc:postgresql://localhost:5432/contexa}}
+    username: ${CONTEXA_DB_USERNAME:${DB_USERNAME:contexa}}
+    password: ${CONTEXA_DB_PASSWORD:${DB_PASSWORD:contexa1234!@#}}
+    driver-class-name: ${CONTEXA_DB_DRIVER:org.postgresql.Driver}
+  jpa:
+    hibernate:
+      ddl-auto: update
+  bridge:
+    enabled: true
+
+security:
+  zerotrust:
+    enabled: true
+    mode: SHADOW
+
+spring:
+  application:
+    name: legacy-system-with-contexa
+  datasource:
+    url: jdbc:h2:mem:legacy_customer;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  thymeleaf:
+    cache: false
+
+  auth:
+    urls:
+      factors:
+        passkey:
+          rp-id: localhost
+          rp-name: Contexa Security
+          allowed-origins: http://localhost:9090
+  ai:
+    ollama:
+      base-url: http://127.0.0.1:11434
+      embedding:
+        enabled: true
+        model: mxbai-embed-large
+      chat:
+        options:
+          model: qwen2.5:7b
+          keep-alive: "24h"
+    openai:
+      api-key: ${OPENAI_API_KEY:}
+      base-url: https://api.openai.com
+      chat:
+        options:
+          model: gpt-4o-mini
+          temperature: 0.3
+        enabled: true
+      embedding:
+        enabled: false
+        options:
+          model: text-embedding-3-small
+
+    anthropic:
+      api-key: ${ANTHROPIC_API_KEY:your-anthropic-api-key}
+      chat:
+        enabled: false
+
+  zero-trust:
+    enabled: true
+    ai:
+      chat:
+        model:
+          priority: openai,ollama
+
+logging:
+  level:
+    io.contexa: INFO
+    io.contexa.contexaexamplelegacysystem: DEBUG
