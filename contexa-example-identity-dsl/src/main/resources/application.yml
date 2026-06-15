@@ -1,48 +1,77 @@
 server:
   port: 8083
 
+# --- Contexa AI Security ---
 contexa:
   infrastructure:
     mode: standalone
 
+  security:
+    zerotrust:
+      mode: SHADOW
+
+  hcad:
+    geoip:
+      dbPath: data/GeoLite2-City.mmdb
+
+  auth:
+    token-transport-type: header_cookie
+    oauth2-csrf: false
+    token-persistence: localstorage
+
 spring:
   application:
-    name: contexa-example-identity-dsl
-
+    name: contexa-site
   thymeleaf:
+    cache: false
     prefix: classpath:/templates/
     suffix: .html
-
+  messages:
+    basename: i18n/messages-site,i18n/messages-enterprise,i18n/messages,i18n/messages-starter
+    encoding: UTF-8
+    fallback-to-system-locale: false
+  web:
+    resources:
+      cache:
+        period: 0
+        cachecontrol:
+          no-cache: true
+      chain:
+        cache: false
   datasource:
-    url: jdbc:postgresql://localhost:5432/contexa
-    username: ${DB_USERNAME:admin}
-    password: ${DB_PASSWORD:1111}
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/contexa}
+    username: ${DB_USERNAME:contexa}
+    password: ${DB_PASSWORD:contexa1234!@#}
     driver-class-name: org.postgresql.Driver
-
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+  ai:
+    retry:
+      max-attempts: 1
+    anthropic:
+      api-key: ${ANTHROPIC_API_KEY:your-anthropic-api-key}
+      chat:
+        options:
+          model: claude-3-sonnet-20240229
+    openai:
+      api-key: ${OPENAI_API_KEY:your-openai-api-key}
+      base-url: https://api.openai.com
+      chat:
+        options:
+          model: gpt-4o-mini
+          temperature: 0.3
+  flyway:
+    enabled: false
+    baseline-on-migrate: true
   jpa:
     database: POSTGRESQL
     hibernate:
-      ddl-auto: update
-
-  ai:
-    chat:
-      model:
-        priority: ollama
-
-    ollama:
-      base-url: http://127.0.0.1:11434
-      chat:
-        options:
-          model: qwen2.5:7b
-          keep-alive: "24h"
-      embedding:
-        enabled: true
-        model: mxbai-embed-large
-
-    vectorstore:
-      pgvector:
-        table-name: vector_store
-        index-type: HNSW
-        distance-type: COSINE_DISTANCE
-        dimensions: 1024
-        initialize-schema: true
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    show-sql: false
+# --- End Contexa ---

@@ -2,8 +2,20 @@ server:
   port: 8082
 
 contexa:
+  llm:
+    enabled: false
+  capability:
+    mode: warn
   infrastructure:
     mode: standalone
+  datasource:
+    url: ${CONTEXA_DB_URL:jdbc:postgresql://localhost:5432/contexa_oss}
+    username: ${CONTEXA_DB_USERNAME:${DB_USERNAME:contexa}}
+    password: ${CONTEXA_DB_PASSWORD:${DB_PASSWORD:contexa1234!@#}}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
 
 spring:
   application:
@@ -11,12 +23,13 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5432/contexa
-    username: ${DB_USERNAME:admin}
-    password: ${DB_PASSWORD:1111}
+    username: ${DB_USERNAME:contexa}
+    password: ${DB_PASSWORD:contexa1234!@#}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     database: POSTGRESQL
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: update
 
