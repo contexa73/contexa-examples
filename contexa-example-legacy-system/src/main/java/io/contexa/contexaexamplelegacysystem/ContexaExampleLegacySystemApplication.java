@@ -2,17 +2,20 @@ package io.contexa.contexaexamplelegacysystem;
 
 import io.contexa.contexacommon.annotation.EnableAISecurity;
 import io.contexa.contexacommon.security.bridge.SecurityMode;
+import io.contexa.contexacommon.security.bridge.SessionAuthBridge;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * Legacy system with Contexa AI Zero Trust protection.
  * <p>
- * SANDBOX mode: Legacy authentication is bridged by explicit ContexaAuthBridge.handoff calls.
+ * SANDBOX mode: Legacy authentication is bridged via SessionAuthBridge.
  * Only @Protectable resources are protected by Contexa.
  * Legacy security (LegacyAuthFilter, LegacyAuthorizationInterceptor) is untouched.
  */
-@EnableAISecurity(mode = SecurityMode.SANDBOX)
+@EnableAISecurity(
+        mode = SecurityMode.SANDBOX
+)
 @SpringBootApplication
 public class ContexaExampleLegacySystemApplication {
 

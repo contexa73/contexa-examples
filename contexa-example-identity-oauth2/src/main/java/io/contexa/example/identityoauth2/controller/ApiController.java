@@ -17,6 +17,13 @@ public class ApiController {
     @GetMapping("/profile")
     public Map<String, Object> profile() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null) {
+            return Map.of(
+                    "username", "anonymousUser",
+                    "authorities", List.of("ROLE_ANONYMOUS"),
+                    "authMethod", "OAuth2/JWT (None)"
+            );
+        }
         List<String> authorities = auth.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList();

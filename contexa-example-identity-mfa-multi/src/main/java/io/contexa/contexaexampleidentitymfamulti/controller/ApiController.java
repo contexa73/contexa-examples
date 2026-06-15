@@ -17,11 +17,12 @@ public class ApiController {
     @GetMapping("/profile")
     public Map<String, Object> profile() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        List<String> authorities = auth.getAuthorities().stream()
+        List<String> authorities = auth != null ? auth.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .toList();
+                .toList() : List.of("ROLE_ANONYMOUS");
+        String username = auth != null ? auth.getName() : "anonymousUser";
         return Map.of(
-                "username", auth.getName(),
+                "username", username,
                 "authorities", authorities,
                 "authMethod", "Multi MFA"
         );
