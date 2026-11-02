@@ -1,188 +1,101 @@
 # Contexa Examples
 
-Contexa AI Native Zero Trust Security Platform의 실전 예제 모음.
-각 모듈은 독립적인 Spring Boot 애플리케이션으로, 가장 단순한 설정부터 고급 구성까지 단계적으로 학습할 수 있다.
+Seven Spring Boot applications that show how Contexa is added to an application, from the smallest setup to a legacy
+system that keeps its own login. Each module runs on its own.
 
-## Prerequisites
+| Module | Port | Who owns sign-in | What it shows |
+|---|---|---|---|
+| `contexa-example-quickstart` | 8081 | Contexa | The smallest setup: `@EnableAISecurity` and one `@Protectable` endpoint |
+| `contexa-example-protectable` | 8082 | Contexa | The four ways to use `@Protectable` (asynchronous, owner check, synchronous, both) |
+| `contexa-example-identity-dsl` | 8083 | Contexa | The authentication DSL: a form flow and a REST (JSON) flow side by side |
+| `contexa-example-identity-mfa` | 8087 | Contexa | MFA with your own login, one-time code and passkey pages |
+| `contexa-example-identity-mfa-multi` | 8088 | Contexa | Two independent MFA flows under `/admin` and `/user` |
+| `contexa-example-identity-oauth2` | 8089 | Contexa | OAuth2 tokens after a form login, called with a Bearer token |
+| `contexa-example-legacy-system` | 9090 | The application | A legacy login kept as it is, with Contexa watching `@Protectable` APIs |
 
-| Requirement | Version |
-|-------------|---------|
-| Java | 21+ |
-| PostgreSQL | 15+ (pgvector extension) |
-| Ollama | latest |
-| Gradle | 8.x (Wrapper included) |
+The documentation of every example: <https://docs.ctxa.ai/docs/install/examples.html>
 
-### Database Setup
+## What you need
+
+| | |
+|---|---|
+| Java | 21 or later |
+| PostgreSQL | 15 or later, with the `vector` extension (pgvector) |
+| Ollama | with the models `qwen3:8b` (decisions) and `mxbai-embed-large` (past decision records) |
+
+```bash
+ollama pull qwen3:8b
+ollama pull mxbai-embed-large
+```
+
+### The Contexa database
+
+Every example keeps Contexa's data in a dedicated PostgreSQL database. By default it is
+`jdbc:postgresql://localhost:5432/contexa` with the user `contexa` and the password `contexa`:
 
 ```sql
-CREATE DATABASE contexa;
+CREATE USER contexa WITH PASSWORD 'contexa';
+CREATE DATABASE contexa OWNER contexa;
 \c contexa
 CREATE EXTENSION IF NOT EXISTS vector;
 ```
 
-### Ollama Models
+To use another database, set `CONTEXA_DB_URL`, `CONTEXA_DB_USERNAME` and `CONTEXA_DB_PASSWORD`. On the first start
+Contexa creates its tables and default data there. Give each example its own database if you run several of them.
+
+### The Contexa starter
+
+The modules depend on `ai.ctxa:spring-boot-starter-contexa:0.1.0`, resolved from your local Maven repository first
+and then Maven Central. If your build cannot find it, publish it from the
+[Contexa repository](https://github.com/contexa-security/contexa):
 
 ```bash
-ollama pull qwen2.5:7b
-ollama pull mxbai-embed-large
+./gradlew publishToMavenLocal
 ```
 
-### Dependency
-
-All modules depend on `spring-boot-starter-contexa` from Maven Local:
-
-```
-implementation 'ai.ctxa:spring-boot-starter-contexa:0.1.0'
-```
-
----
-
-## Modules
-
-### Get Started
-
-| Module | Port | Description |
-|--------|------|-------------|
-| `contexa-example-quickstart` | 8081 | Minimal setup: `@EnableAISecurity` + YAML |
-| `contexa-example-protectable` | 8082 | `@Protectable` method-level AI security |
-| `contexa-example-identity-dsl` | 8083 | Identity DSL: custom auth flows |
-| `contexa-example-shadow-enforce` | 8084 | Shadow/Enforce mode transition |
-
-### Identity
-
-| Module | Port | Description |
-|--------|------|-------------|
-| `contexa-example-identity-rest` | 8085 | REST API authentication (JSON, SPA/Mobile) |
-| `contexa-example-identity-ott` | 8086 | One-Time Token / Magic Link |
-| `contexa-example-identity-mfa` | 8087 | Advanced MFA with custom pages |
-| `contexa-example-identity-asep` | 8088 | ASEP security exception annotations |
-| `contexa-example-identity-oauth2` | 8089 | OAuth2 JWT stateless authentication |
-
-### IAM
-
-| Module | Port | Description |
-|--------|------|-------------|
-| `contexa-example-iam-dynamic-auth` | 8090 | URL dynamic authorization with AI security expressions (#trust, #ai) |
-| `contexa-example-iam-protectable-analysis` | 8091 | @Protectable + 5 AnalysisRequirement levels + SSE real-time LLM analysis |
-| `contexa-example-iam-permission` | 8092 | hasPermission() with custom DomainPermissionEvaluator |
-
-### AI Engine
-
-| Module | Port | Description |
-|--------|------|-------------|
-| `contexa-example-ai-lab` | 8093 | Custom AILab + AIStrategy + PromptTemplate (sentiment analysis) |
-| `contexa-example-ai-pipeline` | 8094 | PipelineOrchestrator + Custom PipelineStep + DomainResponseProcessor + SSE streaming |
-| `contexa-example-ai-llm` | 8095 | UnifiedLLMOrchestrator + Custom BaseAdvisor + ExecutionContext + Chat UI |
-
----
-
-## Running Examples
-
-Each module runs independently:
+## Running an example
 
 ```bash
-# Quickstart (port 8081)
 ./gradlew :contexa-example-quickstart:bootRun
-
-# Protectable (port 8082)
-./gradlew :contexa-example-protectable:bootRun
-
-# Identity DSL (port 8083)
-./gradlew :contexa-example-identity-dsl:bootRun
-
-# Shadow Mode (port 8084)
-./gradlew :contexa-example-shadow-enforce:bootRun --args='--spring.profiles.active=shadow'
-
-# Enforce Mode (port 8084)
-./gradlew :contexa-example-shadow-enforce:bootRun --args='--spring.profiles.active=enforce'
-
-# Identity REST (port 8085)
-./gradlew :contexa-example-identity-rest:bootRun
-
-# Identity OTT (port 8086)
-./gradlew :contexa-example-identity-ott:bootRun
-
-# Identity MFA (port 8087)
-./gradlew :contexa-example-identity-mfa:bootRun
-
-# Identity ASEP (port 8088)
-./gradlew :contexa-example-identity-asep:bootRun
-
-# Identity OAuth2 (port 8089)
-./gradlew :contexa-example-identity-oauth2:bootRun
-
-# IAM Dynamic Auth (port 8090)
-./gradlew :contexa-example-iam-dynamic-auth:bootRun
-
-# IAM Protectable Analysis (port 8091)
-./gradlew :contexa-example-iam-protectable-analysis:bootRun
-
-# IAM Permission (port 8092)
-./gradlew :contexa-example-iam-permission:bootRun
-
-# AI Lab (port 8093) — http://localhost:8093/lab/test
-./gradlew :contexa-example-ai-lab:bootRun
-
-# AI Pipeline (port 8094) — http://localhost:8094/pipeline/test
-./gradlew :contexa-example-ai-pipeline:bootRun
-
-# AI LLM (port 8095) — http://localhost:8095/llm/test
-./gradlew :contexa-example-ai-llm:bootRun
 ```
 
----
+Replace the module name with any of the seven. The Ollama address defaults to `http://localhost:11434`; set
+`OLLAMA_BASE_URL` to use another one. A local model answers slower than a hosted one, so the examples give the
+Layer 2 analysis 120 seconds (`contexa.security.tiered.layer2.timeout-ms`, 30 seconds by default).
 
-## Common Configuration
+### Local values only
 
-All modules share the following base configuration:
+So that the examples start as they are, their `application.yml` carries values that must never reach a deployment:
 
-```yaml
-contexa:
-  infrastructure:
-    mode: standalone
+| Value | In the examples | For anything beyond a local run |
+|---|---|---|
+| Sample accounts | `admin`, `manager`, `developer`, `user`, `finance` with the password `1111` (`contexa.iam.seed.accounts.enabled: true`) | Leave the setting off |
+| Evidence signing key | A fixed example key | Set `CONTEXA_EVIDENCE_KEY` (Base64, 32 bytes or more) |
+| Token signing keys | `example-jwk.p12` in the resources | Set `CONTEXA_JWK_KEY_STORE` and `CONTEXA_JWK_KEY_STORE_PASSWORD` |
+| OAuth2 client secret (identity-oauth2) | `example-local-client-secret` | Set `CONTEXA_OAUTH2_CLIENT_SECRET` |
 
-spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/contexa
-    username: ${DB_USERNAME:admin}
-    password: ${DB_PASSWORD:1111}
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    database: POSTGRESQL
-    hibernate:
-      ddl-auto: update
-  ai:
-    chat:
-      model:
-        priority: ollama
-    ollama:
-      base-url: http://127.0.0.1:11434
-      chat:
-        options:
-          model: qwen2.5:7b
-          keep-alive: "24h"
-      embedding:
-        enabled: true
-        model: mxbai-embed-large
-    vectorstore:
-      pgvector:
-        table-name: vector_store
-        index-type: HNSW
-        distance-type: COSINE_DISTANCE
-        dimensions: 1024
-        initialize-schema: true
-```
+## Trying each example
 
-Environment variables `DB_USERNAME` and `DB_PASSWORD` can override database credentials.
+Sign in with `admin` / `1111` unless noted.
 
----
+- **quickstart** — open <http://localhost:8081/test/quickstart>, then `GET /api/hello`. The decision is recorded in
+  SHADOW mode: Contexa decides, records and does not block.
+- **protectable** — open <http://localhost:8082/test/protectable>. `GET /api/orders` and
+  `GET /api/orders/customer/{id}` are decided after the response; `POST /api/orders` and `DELETE /api/orders/{id}`
+  wait for the decision.
+- **identity-dsl** — the form flow at <http://localhost:8083/login>, or the REST flow:
+  `POST /api/login` with `{"username":"admin","password":"1111"}`, then `GET /api/profile`.
+- **identity-mfa** — <http://localhost:8087/customLogin>; after the password, the one-time code page follows.
+- **identity-mfa-multi** — <http://localhost:8088/>: administrators sign in at `/admin/mfa/login` (passkey, or a
+  one-time code before a passkey is registered), users at `/user/mfa/login` (one-time code).
+- **identity-oauth2** — <http://localhost:8089/login>; after sign-in the token test page `/test/token` calls
+  `/api/token-test/*` with the access token. The keys are published at `/oauth2/jwks`.
+- **legacy-system** — <http://localhost:9090/legacy/login> with the legacy accounts (`admin` / `admin123`,
+  `kim_manager` / `manager123`, `park_dev` / `dev123`, `lee_analyst` / `analyst123`). `GET /api/customers` is decided
+  after the response and `GET /api/customers/export` waits for the decision; both are `@Protectable`.
 
 ## Build
 
 ```bash
-# Compile all modules
-./gradlew compileJava
-
-# Build all modules
 ./gradlew build
 ```
