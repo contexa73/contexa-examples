@@ -41,15 +41,20 @@ public class SecurityConfig {
                             sc.securityContextRepository(aiSessionSecurityContextRepository));
         };
 
+        // The REST flow takes /api/** only and is ordered first; the form flow takes every other request.
+        // Two flows that both take every request would leave the second one unreachable.
         return registry
                 .global(globalHttpCustomizer)
+                .rest(rest -> rest
+                        .order(50)
+                        .loginProcessingUrl("/api/login")
+                        .defaultSuccessUrl("/api/profile")
+                        .rawHttp(http -> http.securityMatcher("/api/**")))
+                .session(Customizer.withDefaults())
                 .form(form -> form
+                        .order(100)
                         .loginPage("/login")
                         .defaultSuccessUrl("/"))
-                .session(Customizer.withDefaults())
-                .rest(rest -> rest
-                        .loginProcessingUrl("/api/login")
-                        .defaultSuccessUrl("/api/profile"))
                 .session(Customizer.withDefaults())
                 .build();
     }

@@ -16,10 +16,12 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 /**
  * Multi MFA example demonstrating two independent MFA flows.
  *
- * Flow 1 (Admin): urlPrefix("/admin") + Passkey
+ * Flow 1 (Admin): urlPrefix("/admin") + Passkey, with OTT
  *   - /admin/mfa/login -> auto-generated login form
  *   - /admin/mfa/select-factor -> factor selection
  *   - /admin/mfa/challenge/passkey -> passkey challenge
+ *   - /admin/mfa/challenge/ott -> OTT challenge, so that an administrator without a passkey can verify by email
+ *     and then register one (a passkey can be registered only after MFA completes)
  *   - securityMatcher("/admin/**") auto-configured
  *
  * Flow 2 (User): urlPrefix("/user") + OTT
@@ -54,7 +56,7 @@ public class SecurityConfig {
         return registry
                 .global(globalHttpCustomizer)
 
-                // Admin MFA Flow: Passkey only
+                // Admin MFA Flow: Passkey, with OTT for administrators who have no passkey yet
                 .mfa(mfa -> mfa
                         .name("admin")
                         .urlPrefix("/admin")
@@ -62,6 +64,7 @@ public class SecurityConfig {
                                 .formLogin(form -> form
                                         .defaultSuccessUrl("/admin/dashboard")))
                         .passkey(Customizer.withDefaults())
+                        .ott(Customizer.withDefaults())
                         .order(60)
                 ).session(Customizer.withDefaults())
 

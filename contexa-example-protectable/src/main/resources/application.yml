@@ -1,61 +1,65 @@
+# This example lets Contexa own sign-in: the main class uses @EnableAISecurity(mode = SecurityMode.FULL),
+# so the Contexa database is also the application's database and Contexa builds the PlatformConfig login chains.
 server:
   port: 8082
-
-contexa:
-  llm:
-    enabled: false
-  capability:
-    mode: warn
-  infrastructure:
-    mode: standalone
-  datasource:
-    url: ${CONTEXA_DB_URL:jdbc:postgresql://localhost:5432/contexa_oss}
-    username: ${CONTEXA_DB_USERNAME:${DB_USERNAME:contexa}}
-    password: ${CONTEXA_DB_PASSWORD:${DB_PASSWORD:contexa1234!@#}}
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update
 
 spring:
   application:
     name: contexa-example-protectable
-
-  datasource:
-    url: jdbc:postgresql://localhost:5432/contexa
-    username: ${DB_USERNAME:contexa}
-    password: ${DB_PASSWORD:contexa1234!@#}
-    driver-class-name: org.postgresql.Driver
-
   jpa:
-    database: POSTGRESQL
     defer-datasource-initialization: true
     hibernate:
       ddl-auto: update
-
   sql:
     init:
       mode: always
 
-  ai:
-    chat:
-      model:
-        priority: ollama
-
-    ollama:
-      base-url: http://127.0.0.1:11434
-      chat:
-        options:
-          model: qwen2.5:7b
-          keep-alive: "24h"
-      embedding:
+contexa:
+  infrastructure:
+    mode: standalone
+  datasource:
+    # The dedicated Contexa database (PostgreSQL with the vector extension). Required.
+    url: ${CONTEXA_DB_URL:jdbc:postgresql://localhost:5432/contexa}
+    username: ${CONTEXA_DB_USERNAME:contexa}
+    password: ${CONTEXA_DB_PASSWORD:contexa}
+  iam:
+    seed:
+      accounts:
+        # Local sample accounts: admin, manager, developer, user, finance with the password 1111.
+        # Never turn this on in a deployment.
         enabled: true
+  llm:
+    selection:
+      chat:
+        priority: ollama
+      embedding:
+        priority: ollama
+    chat:
+      ollama:
+        base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+        model: qwen3:8b
+        keep-alive: 30m
+    embedding:
+      ollama:
         model: mxbai-embed-large
-
-    vectorstore:
-      pgvector:
-        table-name: vector_store
-        index-type: HNSW
-        distance-type: COSINE_DISTANCE
-        dimensions: 1024
-        initialize-schema: true
+  security:
+    tiered:
+      layer2:
+        # The whole Layer 2 analysis. A local 8B model on one GPU takes 10-40 s a call and Layer 2 may make two
+        # calls, so the default 30 s would leave decisions held for review (docs: Decision Tuning).
+        timeout-ms: 120000
+    evidence:
+      signing:
+        # A local example key. For anything beyond a local run set CONTEXA_EVIDENCE_KEY (Base64, 32 bytes or more).
+        keys:
+          example: ${CONTEXA_EVIDENCE_KEY:Sa/yfEAwSZwei5hpVC4TImjU/jJqS0lsLdSNZxxErqA=}
+        active-key-id: example
+  auth:
+    oauth2:
+      # A local example key store (src/main/resources/example-jwk.p12). Never use it in a deployment.
+      jwk-key-store-path: ${CONTEXA_JWK_KEY_STORE:classpath:example-jwk.p12}
+      jwk-key-store-password: ${CONTEXA_JWK_KEY_STORE_PASSWORD:example-local}
+      jwk-key-alias: contexa-example
+  jpa:
+    hibernate:
+      ddl-auto: update

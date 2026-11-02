@@ -12,12 +12,10 @@ allprojects {
     version = '0.0.1-SNAPSHOT'
 
     repositories {
+        // Contexa 0.1.0 comes from Maven Local (run `./gradlew publishToMavenLocal` in the contexa repository)
+        // or from Maven Central once it is published there.
         mavenLocal()
         mavenCentral()
-        maven {
-            name = 'Central Portal Snapshots'
-            url = 'https://central.sonatype.com/repository/maven-snapshots/'
-        }
     }
 }
 
@@ -38,12 +36,12 @@ subprojects {
         }
     }
 
-    configurations.all {
-        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-    }
-
     dependencies {
-        implementation 'ai.ctxa:spring-boot-starter-contexa:0.1.0-SNAPSHOT'
+        // The Contexa starter brings no model provider and no PgVector starter: add them (installation guide, step 1).
+        implementation 'ai.ctxa:spring-boot-starter-contexa:0.1.0'
+        implementation platform('org.springframework.ai:spring-ai-bom:1.1.8')
+        implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
+        implementation 'org.springframework.ai:spring-ai-starter-vector-store-pgvector'
         implementation 'org.springframework.boot:spring-boot-starter-web'
         implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
@@ -53,6 +51,8 @@ subprojects {
 
         runtimeOnly 'org.postgresql:postgresql'
         runtimeOnly 'com.h2database:h2'
+
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
     }
 
     tasks.named('test') {

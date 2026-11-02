@@ -1,77 +1,62 @@
+# This example lets Contexa own sign-in: the main class uses @EnableAISecurity(mode = SecurityMode.FULL),
+# so the Contexa database is also the application's database and Contexa builds the PlatformConfig login chains.
 server:
   port: 8083
 
-# --- Contexa AI Security ---
+spring:
+  application:
+    name: contexa-example-identity-dsl
+  thymeleaf:
+    cache: false
+
 contexa:
   infrastructure:
     mode: standalone
-
+  datasource:
+    # The dedicated Contexa database (PostgreSQL with the vector extension). Required.
+    url: ${CONTEXA_DB_URL:jdbc:postgresql://localhost:5432/contexa}
+    username: ${CONTEXA_DB_USERNAME:contexa}
+    password: ${CONTEXA_DB_PASSWORD:contexa}
+  iam:
+    seed:
+      accounts:
+        # Local sample accounts: admin, manager, developer, user, finance with the password 1111.
+        # Never turn this on in a deployment.
+        enabled: true
+  llm:
+    selection:
+      chat:
+        priority: ollama
+      embedding:
+        priority: ollama
+    chat:
+      ollama:
+        base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+        model: qwen3:8b
+        keep-alive: 30m
+    embedding:
+      ollama:
+        model: mxbai-embed-large
   security:
     zerotrust:
       mode: SHADOW
-
-  hcad:
-    geoip:
-      dbPath: data/GeoLite2-City.mmdb
-
+    tiered:
+      layer2:
+        # The whole Layer 2 analysis. A local 8B model on one GPU takes 10-40 s a call and Layer 2 may make two
+        # calls, so the default 30 s would leave decisions held for review (docs: Decision Tuning).
+        timeout-ms: 120000
+    evidence:
+      signing:
+        # A local example key. For anything beyond a local run set CONTEXA_EVIDENCE_KEY (Base64, 32 bytes or more).
+        keys:
+          example: ${CONTEXA_EVIDENCE_KEY:Sa/yfEAwSZwei5hpVC4TImjU/jJqS0lsLdSNZxxErqA=}
+        active-key-id: example
   auth:
     token-transport-type: header_cookie
     oauth2-csrf: false
     token-persistence: localstorage
-
-spring:
-  application:
-    name: contexa-site
-  thymeleaf:
-    cache: false
-    prefix: classpath:/templates/
-    suffix: .html
-  messages:
-    basename: i18n/messages-site,i18n/messages-enterprise,i18n/messages,i18n/messages-starter
-    encoding: UTF-8
-    fallback-to-system-locale: false
-  web:
-    resources:
-      cache:
-        period: 0
-        cachecontrol:
-          no-cache: true
-      chain:
-        cache: false
-  datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/contexa}
-    username: ${DB_USERNAME:contexa}
-    password: ${DB_PASSWORD:contexa1234!@#}
-    driver-class-name: org.postgresql.Driver
-  data:
-    redis:
-      host: ${REDIS_HOST:localhost}
-  ai:
-    retry:
-      max-attempts: 1
-    anthropic:
-      api-key: ${ANTHROPIC_API_KEY:your-anthropic-api-key}
-      chat:
-        options:
-          model: claude-3-sonnet-20240229
-    openai:
-      api-key: ${OPENAI_API_KEY:your-openai-api-key}
-      base-url: https://api.openai.com
-      chat:
-        options:
-          model: gpt-4o-mini
-          temperature: 0.3
-  flyway:
-    enabled: false
-    baseline-on-migrate: true
-  jpa:
-    database: POSTGRESQL
-    hibernate:
-      ddl-auto: validate
-    properties:
-      hibernate:
-        jdbc:
-          lob:
-            non_contextual_creation: true
-    show-sql: false
-# --- End Contexa ---
+    oauth2:
+      # A local example key store (src/main/resources/example-jwk.p12). Never use it in a deployment.
+      jwk-key-store-path: ${CONTEXA_JWK_KEY_STORE:classpath:example-jwk.p12}
+      jwk-key-store-password: ${CONTEXA_JWK_KEY_STORE_PASSWORD:example-local}
+      jwk-key-alias: contexa-example

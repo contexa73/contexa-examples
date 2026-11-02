@@ -19,11 +19,10 @@ contexa:
       ddl-auto: update
   bridge:
     enabled: true
-
-security:
-  zerotrust:
-    enabled: true
-    mode: SHADOW
+  security:
+    zerotrust:
+      enabled: true
+      mode: SHADOW
 
 spring:
   datasource:

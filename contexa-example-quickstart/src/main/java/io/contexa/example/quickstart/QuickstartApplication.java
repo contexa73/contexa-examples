@@ -1,6 +1,7 @@
 package io.contexa.example.quickstart;
 
 import io.contexa.contexacommon.annotation.EnableAISecurity;
+import io.contexa.contexacommon.security.bridge.SecurityMode;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -11,7 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * via IdentityDslRegistry. No custom SecurityConfig required for basic usage.
  */
 @SpringBootApplication
-@EnableAISecurity
+@EnableAISecurity(mode = SecurityMode.FULL)
 public class QuickstartApplication {
 
     public static void main(String[] args) {
